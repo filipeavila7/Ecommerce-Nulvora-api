@@ -29,13 +29,7 @@ public record ProductVariantUpdateRequest(
         Integer stockQuantity,
 
 
-        Set<@NotNull Long> optionsIds,
-
-
-        @Size(max = 5, message = "O produto pode ter no máximo 5 imagens")
-        List<ProductImgUpdateRequest> images
-
-
+        Set<@NotNull Long> optionsIds
 
 ) {
 }

@@ -70,13 +70,11 @@ public class ProductImgService {
 
 
     // atualizar uma imagem de variant
-    public void updateVariantImgs(Long variantId, ProductImgUpdateRequest request){
+    public ProductImg updateVariantImgs(Long variantId, ProductImgUpdateRequest request){
         // encontra a imagem
         ProductImg variantImg = productImgRepository.findByIdAndProductVariantId(request.id(), variantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Imagem não encontrada"));
-
-        productImgMapper.updateEntity(request, variantImg);
 
         // caso ela seja a nova primária, a antiga terá isPrimary como false
         if (Boolean.TRUE.equals(request.isPrimary())) {
@@ -85,6 +83,8 @@ public class ProductImgService {
 
         // atualiza
         productImgMapper.updateEntity(request, variantImg);
+
+        return variantImg;
 
     }
 }

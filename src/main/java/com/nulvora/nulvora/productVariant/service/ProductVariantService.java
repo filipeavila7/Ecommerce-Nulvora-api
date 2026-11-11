@@ -5,6 +5,9 @@ import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.repository.ProductRepository;
 import com.nulvora.nulvora.product.service.ProductService;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
+import com.nulvora.nulvora.productImg.dto.request.ProductImgUpdateRequest;
+import com.nulvora.nulvora.productImg.dto.response.ProductImgResponse;
+import com.nulvora.nulvora.productImg.entity.ProductImg;
 import com.nulvora.nulvora.productImg.service.ProductImgService;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantUpdateRequest;
@@ -102,11 +105,16 @@ public class ProductVariantService {
 
     }
 
+    // editar imagem de uma variante
+    public ProductImgResponse updateVariantImg(Long variantId, ProductImgUpdateRequest request){
+        ProductVariant productVariant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Variante não encontrada"));
 
+        ProductImg variantImg = productImgService.updateVariantImgs(productVariant.getId(), request);
 
-
-
-
+        return productVariantMapper.toImgResponse(variantImg);
+    }
 
 
 
