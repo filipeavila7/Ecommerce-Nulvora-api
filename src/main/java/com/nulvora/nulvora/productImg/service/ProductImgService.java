@@ -1,7 +1,9 @@
 package com.nulvora.nulvora.productImg.service;
 
 import com.nulvora.nulvora.productImg.dto.request.ProductImgRequest;
+import com.nulvora.nulvora.productImg.dto.request.ProductImgUpdateRequest;
 import com.nulvora.nulvora.productImg.entity.ProductImg;
+import com.nulvora.nulvora.productImg.mapper.ProductImgMapper;
 import com.nulvora.nulvora.productImg.repository.ProductImgRepository;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class ProductImgService {
     private final ProductImgRepository productImgRepository;
+    private final ProductImgMapper productImgMapper;
 
     // criar imagens para a variante, defininindo que apenas uma imagem vai ter primary = true
     public void createVariantImgs(ProductVariant productVariant, List<ProductImgRequest> images){
@@ -62,6 +65,26 @@ public class ProductImgService {
         productImgRepository.saveAll(productImgs);
 
 
+
+    }
+
+
+    // atualizar uma imagem de variant
+    public void updateVariantImgs(Long variantId, ProductImgUpdateRequest request){
+        // encontra a imagem
+        ProductImg variantImg = productImgRepository.findByIdAndProductVariantId(request.id(), variantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Imagem não encontrada"));
+
+        productImgMapper.updateEntity(request, variantImg);
+
+        // caso ela seja a nova primária, a antiga terá isPrimary como false
+        if (Boolean.TRUE.equals(request.isPrimary())) {
+            productImgRepository.removePrimaryFromOthers(variantId, variantImg.getId());
+        }
+
+        // atualiza
+        productImgMapper.updateEntity(request, variantImg);
 
     }
 }

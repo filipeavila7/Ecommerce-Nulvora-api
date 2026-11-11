@@ -7,6 +7,7 @@ import com.nulvora.nulvora.product.service.ProductService;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
 import com.nulvora.nulvora.productImg.service.ProductImgService;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
+import com.nulvora.nulvora.productVariant.dto.request.ProductVariantUpdateRequest;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.productVariant.mapper.ProductVariantMapper;
@@ -77,6 +78,33 @@ public class ProductVariantService {
         return productVariantMapper.toResponse(variantSave);
 
     }
+
+
+    // editar variante (atributos da variante e opções)
+    @Transactional
+    public ProductVariantResponse updateVariant(Long variantId, ProductVariantUpdateRequest request){
+        ProductVariant productVariant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Variante não encontrada"));
+
+
+        // edita somente os campos que não são nulos
+        productVariantMapper.updateEntity(request, productVariant);
+
+        // atualiza as opções
+        if (request.optionsIds() != null){
+            productAttributeOptionService.validadeAttributeQuantitiy(request.optionsIds(), productVariant.getProduct());
+            variantAttributeService.updateVariantAttributes(productVariant, request.optionsIds());
+        }
+
+
+        return productVariantMapper.toResponse(productVariantRepository.save(productVariant));
+
+    }
+
+
+
+
 
 
 

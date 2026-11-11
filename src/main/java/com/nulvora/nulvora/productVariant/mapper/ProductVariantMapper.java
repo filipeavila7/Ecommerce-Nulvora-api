@@ -4,12 +4,12 @@ import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.productImg.dto.response.ProductImgResponse;
 import com.nulvora.nulvora.productImg.entity.ProductImg;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
+import com.nulvora.nulvora.productVariant.dto.request.ProductVariantUpdateRequest;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantAttributesResponse;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ProductVariantMapper {
@@ -29,7 +29,22 @@ public interface ProductVariantMapper {
     ProductVariant toEntity(ProductVariantRequest request);
 
 
-    // o campo attributer do dto se refere a lista de variantAttributes
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "product", ignore = true)
+    @Mapping(target = "reviews", ignore = true)
+    @Mapping(target = "productImgs", ignore = true)
+    @Mapping(target = "variantAttributes", ignore = true)
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    void updateEntity(
+            ProductVariantUpdateRequest request,
+            @MappingTarget ProductVariant productVariant
+    );
+
+
+    // o campo attributes do dto se refere a lista de variantAttributes
     @Mapping(target = "attributes", source = "variantAttributes")
     @Mapping(target = "productImgs", source = "productImgs")
     ProductVariantResponse toResponse(ProductVariant productVariant);

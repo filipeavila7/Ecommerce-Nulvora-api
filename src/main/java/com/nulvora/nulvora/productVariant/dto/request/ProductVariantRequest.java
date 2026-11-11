@@ -17,7 +17,6 @@ public record ProductVariantRequest(
         @Size(max = 100, message = "O nome do produto deve ter no máximo 100 caracters")
         String name,
 
-
         @NotNull
         @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero")
         @Digits(integer = 10, fraction = 2, message = "O preço deve ter no máximo 10 dígitos inteiros e 2 decimais")
@@ -32,7 +31,7 @@ public record ProductVariantRequest(
 
         @NotEmpty(message = "Envie pelo menos uma imagem")
         @Size(max = 5, message = "O produto pode ter no máximo 5 imagens")
-        List<ProductImgRequest> images
+        List<@NotNull ProductImgRequest> images
 
 
 

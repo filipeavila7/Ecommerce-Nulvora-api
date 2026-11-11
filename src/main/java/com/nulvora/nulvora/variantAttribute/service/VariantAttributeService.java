@@ -6,6 +6,7 @@ import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
 import com.nulvora.nulvora.variantAttribute.mapper.VariantAttributeMapper;
 import com.nulvora.nulvora.variantAttribute.repository.VariantAttributeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,72 @@ public class VariantAttributeService {
         if (alreadyExists){
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Essas opções ja foram utilizadas por outra variante");
+        }
+    }
+
+
+    public void validateVariantCombination(
+            Set<Long> optionsIds,
+            Long productId,
+            Long variantId
+    ) {
+
+        List<VariantAttribute> variantAttributes =
+                variantAttributeRepository
+                        .findAllByOption_ProductAttribute_Product_Id(productId);
+
+        Map<Long, Set<Long>> combinations = variantAttributes.stream()
+                .collect(Collectors.groupingBy(
+                        va -> va.getProductVariant().getId(),
+                        Collectors.mapping(
+                                va -> va.getOption().getId(),
+                                Collectors.toSet()
+                        )
+                ));
+
+        boolean alreadyExists = combinations.entrySet()
+                .stream()
+                .anyMatch(entry ->
+                        !entry.getKey().equals(variantId)
+                                && entry.getValue().equals(optionsIds)
+                );
+
+        if (alreadyExists) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Essas opções já foram utilizadas por outra variante"
+            );
+        }
+    }
+
+
+    @Transactional
+    public void updateVariantAttributes(
+            ProductVariant variant,
+            Set<Long> optionsIds
+    ) {
+
+        // valida a combinação ignorando a própria variante
+        validateVariantCombination(
+                optionsIds,
+                variant.getProduct().getId(),
+                variant.getId()
+        );
+
+        // busca os relacionamentos existentes
+        List<VariantAttribute> existingAttributes =
+                variantAttributeRepository
+                        .findAllByProductVariantId(variant.getId());
+
+        // remove os relacionamentos antigos
+        variantAttributeRepository.deleteAll(existingAttributes);
+
+        // atualiza a coleção inversa
+        variant.getVariantAttributes().clear();
+
+        // cria os novos relacionamentos
+        for (Long optionId : optionsIds) {
+            createVariantAttribute(variant, optionId);
         }
     }
 

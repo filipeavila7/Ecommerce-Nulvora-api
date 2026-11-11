@@ -8,4 +8,6 @@ import java.util.List;
 public interface VariantAttributeRepository extends JpaRepository<VariantAttribute, Long> {
 
     List<VariantAttribute> findAllByOption_ProductAttribute_Product_Id(Long productId);
+
+    List<VariantAttribute> findAllByProductVariantId(Long variantId);
 }
