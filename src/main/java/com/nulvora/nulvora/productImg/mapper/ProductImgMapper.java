@@ -9,6 +9,7 @@ public interface ProductImgMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "productVariant", ignore = true)
+    @Mapping(target = "primary", source = "isPrimary")
     @BeanMapping(
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
     )

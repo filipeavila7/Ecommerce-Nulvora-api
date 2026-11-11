@@ -16,10 +16,10 @@ public interface ProductImgRepository extends JpaRepository<ProductImg, Long> {
     @Modifying
     @Query("""
     UPDATE ProductImg img
-    SET img.isPrimary = false
-    WHERE img.productVariant.id = :variantId
-    AND img.id <> :imageId
-    AND img.isPrimary = true
+      SET img.primary = false
+      WHERE img.productVariant.id = :variantId
+      AND img.id <> :imageId
+      AND img.primary = true
 """)
     void removePrimaryFromOthers(Long variantId, Long imageId);
 }

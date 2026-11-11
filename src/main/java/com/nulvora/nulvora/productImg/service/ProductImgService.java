@@ -5,10 +5,14 @@ import com.nulvora.nulvora.productImg.dto.request.ProductImgUpdateRequest;
 import com.nulvora.nulvora.productImg.entity.ProductImg;
 import com.nulvora.nulvora.productImg.mapper.ProductImgMapper;
 import com.nulvora.nulvora.productImg.repository.ProductImgRepository;
+import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -19,6 +23,7 @@ import java.util.stream.IntStream;
 public class ProductImgService {
     private final ProductImgRepository productImgRepository;
     private final ProductImgMapper productImgMapper;
+
 
     // criar imagens para a variante, defininindo que apenas uma imagem vai ter primary = true
     public void createVariantImgs(ProductVariant productVariant, List<ProductImgRequest> images){
@@ -70,6 +75,7 @@ public class ProductImgService {
 
 
     // atualizar uma imagem de variant
+    @Transactional
     public ProductImg updateVariantImgs(Long variantId, ProductImgUpdateRequest request){
         // encontra a imagem
         ProductImg variantImg = productImgRepository.findByIdAndProductVariantId(request.id(), variantId)

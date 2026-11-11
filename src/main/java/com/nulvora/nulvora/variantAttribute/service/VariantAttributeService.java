@@ -6,10 +6,11 @@ import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
 import com.nulvora.nulvora.variantAttribute.mapper.VariantAttributeMapper;
 import com.nulvora.nulvora.variantAttribute.repository.VariantAttributeRepository;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -114,6 +115,9 @@ public class VariantAttributeService {
 
         // remove os relacionamentos antigos
         variantAttributeRepository.deleteAll(existingAttributes);
+
+        // força a execução dos DELETEs no banco
+        variantAttributeRepository.flush();
 
         // atualiza a coleção inversa
         variant.getVariantAttributes().clear();

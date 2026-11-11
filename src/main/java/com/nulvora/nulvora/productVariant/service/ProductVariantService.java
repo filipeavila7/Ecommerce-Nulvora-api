@@ -17,6 +17,8 @@ import com.nulvora.nulvora.productVariant.mapper.ProductVariantMapper;
 import com.nulvora.nulvora.productVariant.repository.ProductVariantRepository;
 import com.nulvora.nulvora.variantAttribute.service.VariantAttributeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,21 @@ public class ProductVariantService {
     private final ProductImgService productImgService;
     private final GlobalHelperService globalHelperService;
 
+    // get de todas as variantes pelo id do produto
+    public Page<ProductVariantResponse> getAllVariants(Long productId, Pageable pageable){
+        return productVariantRepository.findAllByProductIdAndActiveTrue(productId, pageable)
+                .map(productVariantMapper::toResponse);
+
+    }
+
+    // get de uma variante pelo id
+    public ProductVariantResponse getVariantById(Long variantId){
+        ProductVariant productVariant = productVariantRepository.findByIdActiveTrue(variantId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Variante não encontrada"));
+
+        return productVariantMapper.toResponse(productVariant);
+    }
 
     // criar variante padrão automaticamente
     public void createStandardVariant(Product product){
@@ -48,7 +65,6 @@ public class ProductVariantService {
 
         productVariantRepository.save(defaultVariant);
     }
-
 
     // criar variante de produtos
     @Transactional
@@ -82,11 +98,10 @@ public class ProductVariantService {
 
     }
 
-
     // editar variante (atributos da variante e opções)
     @Transactional
     public ProductVariantResponse updateVariant(Long variantId, ProductVariantUpdateRequest request){
-        ProductVariant productVariant = productVariantRepository.findById(variantId)
+        ProductVariant productVariant = productVariantRepository.findByIdActiveTrue(variantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Variante não encontrada"));
 
@@ -107,7 +122,7 @@ public class ProductVariantService {
 
     // editar imagem de uma variante
     public ProductImgResponse updateVariantImg(Long variantId, ProductImgUpdateRequest request){
-        ProductVariant productVariant = productVariantRepository.findById(variantId)
+        ProductVariant productVariant = productVariantRepository.findByIdActiveTrue(variantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Variante não encontrada"));
 
@@ -115,9 +130,6 @@ public class ProductVariantService {
 
         return productVariantMapper.toImgResponse(variantImg);
     }
-
-
-
 
     // gerar sku aleatório
     private String generateSku() {
@@ -138,8 +150,6 @@ public class ProductVariantService {
 
         return sku;
     }
-
-
 
 
 }

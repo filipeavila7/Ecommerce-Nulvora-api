@@ -7,6 +7,7 @@ import com.nulvora.nulvora.product.dto.request.ProductAttributeRequest;
 import com.nulvora.nulvora.product.dto.request.ProductRequest;
 import com.nulvora.nulvora.product.dto.request.ProductUpdateRequest;
 import com.nulvora.nulvora.product.dto.response.ProductResponse;
+import com.nulvora.nulvora.product.dto.response.ProductSumaryResponse;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.mapper.ProductMapper;
 import com.nulvora.nulvora.product.repository.ProductRepository;
@@ -16,6 +17,8 @@ import com.nulvora.nulvora.productAttributeOption.entity.ProductAttributeOption;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
 import com.nulvora.nulvora.productVariant.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +37,11 @@ public class ProductService {
     private final ProductVariantService productVariantService;
     private final GlobalHelperService globalHelperService;
 
+
+    // get de todos os produtos ativos
+    public Page<ProductSumaryResponse> getAllProducts(Pageable pageable){
+        return productRepository.findAllSummaries(pageable);
+    }
 
     // criar produtos
     @Transactional
