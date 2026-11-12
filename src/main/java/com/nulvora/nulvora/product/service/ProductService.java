@@ -6,6 +6,7 @@ import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.product.dto.request.ProductAttributeRequest;
 import com.nulvora.nulvora.product.dto.request.ProductRequest;
 import com.nulvora.nulvora.product.dto.request.ProductUpdateRequest;
+import com.nulvora.nulvora.product.dto.response.ProductDetailsResponse;
 import com.nulvora.nulvora.product.dto.response.ProductResponse;
 import com.nulvora.nulvora.product.dto.response.ProductSumaryResponse;
 import com.nulvora.nulvora.product.entity.Product;
@@ -38,9 +39,15 @@ public class ProductService {
     private final GlobalHelperService globalHelperService;
 
 
-    // get de todos os produtos ativos
+    // get de todos os produtos ativos juntamente com o menor preço dentre as suas variantes
     public Page<ProductSumaryResponse> getAllProducts(Pageable pageable){
         return productRepository.findAllSummaries(pageable);
+    }
+
+    // get de detalhes do produto
+    public ProductDetailsResponse getProductDetails(Long productId){
+        Product product = globalHelperService.getActiveProductOrThrow(productId);
+        return productMapper.toDetailsResponse(product);
     }
 
     // criar produtos
@@ -68,7 +75,6 @@ public class ProductService {
 
     }
 
-
     // editar produtos
     @Transactional
     public ProductResponse updateProduct(Long productId, ProductUpdateRequest request){
@@ -85,7 +91,6 @@ public class ProductService {
 
         return productMapper.toProductResponse(productRepository.save(product));
     }
-
 
     // criar atributos e opções para o produto
     private void createAttributesAndOptions(Product product, List<ProductAttributeRequest> request){
@@ -106,8 +111,6 @@ public class ProductService {
             }
         }
     }
-
-
 
 
 }

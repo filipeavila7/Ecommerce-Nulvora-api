@@ -17,17 +17,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAllByActiveTrue(Pageable pageable);
 
-
+    // retorna todos os produtos ativos ja montando o dto e com seus respectivos preços minimos dentre as variantes
     @Query("""
     SELECT new com.nulvora.nulvora.product.dto.response.ProductSumaryResponse(
         p.id,
         p.name,
+        p.imageUrl,
         MIN(v.price)
     )
     FROM Product p
     LEFT JOIN p.productVariants v ON v.active = true
     WHERE p.active = true
-    GROUP BY p.id, p.name
+    GROUP BY p.id, p.name, p.imageUrl
 """)
     Page<ProductSumaryResponse> findAllSummaries(Pageable pageable);
+
+
 }

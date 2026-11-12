@@ -10,6 +10,7 @@ import java.util.List;
 public record ProductVariantResponse(
         Long id,
         String name,
+        String sku,
         BigDecimal price,
         Integer stockQuantity,
         boolean isDefault,

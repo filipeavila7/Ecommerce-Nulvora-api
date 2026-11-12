@@ -33,8 +33,8 @@ public class ProductVariant {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    @Column(nullable = false)
-    private boolean isDefault;
+    @Column(nullable = false, name = "is_default")
+    private boolean defaultVariant;
 
     private boolean active = true;
 

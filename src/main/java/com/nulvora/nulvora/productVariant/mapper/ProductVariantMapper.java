@@ -11,6 +11,8 @@ import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
 import org.mapstruct.*;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ProductVariantMapper {
 
@@ -21,7 +23,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "reviews", ignore = true)
     @Mapping(target = "productImgs", ignore = true)
     @Mapping(target = "variantAttributes", ignore = true)
-    @Mapping(target = "default", constant = "true")
+    @Mapping(target = "defaultVariant", constant = "true")
     @Mapping(target = "active", constant = "true")
     ProductVariant toDefaultVariant(Product product);
 
@@ -43,23 +45,32 @@ public interface ProductVariantMapper {
             @MappingTarget ProductVariant productVariant
     );
 
+    @Named("activeVariants")
+    default List<ProductVariantResponse> mapActiveVariants(
+            List<ProductVariant> variants
+    ) {
+        return variants.stream()
+                .filter(ProductVariant::isActive)
+                .map(this::toProductVariantResponse)
+                .toList();
+    }
+
 
     // o campo attributes do dto se refere a lista de variantAttributes
     @Mapping(target = "attributes", source = "variantAttributes")
     @Mapping(target = "productImgs", source = "productImgs")
-    ProductVariantResponse toResponse(ProductVariant productVariant);
+    @Mapping(target = "isDefault", source = "defaultVariant")
+    ProductVariantResponse toProductVariantResponse(ProductVariant productVariant);
 
     // o mapper tenta encontrar algum metodo que recebe "variantAttributes" e acha esse
     @Mapping(
             target = "attributeName", // o campo attributeName vai receber o nome do atributo (navega entre as chaves)
             source = "option.productAttribute.name"
     )
-
     @Mapping(
             target = "optionName", // campo optionName recebe o valor
             source = "option.value"
     )
-
     ProductVariantAttributesResponse toAttributeResponse(
             VariantAttribute variantAttribute
     );
