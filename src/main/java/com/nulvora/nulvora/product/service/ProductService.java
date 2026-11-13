@@ -16,6 +16,7 @@ import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productAttribute.service.ProductAttributeService;
 import com.nulvora.nulvora.productAttributeOption.entity.ProductAttributeOption;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
+import com.nulvora.nulvora.productKeywords.service.ProductKeywordService;
 import com.nulvora.nulvora.productVariant.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,19 +37,12 @@ public class ProductService {
     private final ProductAttributeService productAttributeService;
     private final ProductAttributeOptionService productAttributeOptionService;
     private final ProductVariantService productVariantService;
+    private final ProductKeywordService productKeywordService;
     private final GlobalHelperService globalHelperService;
 
 
-    // get de todos os produtos ativos juntamente com o menor preço dentre as suas variantes
-    public Page<ProductSumaryResponse> getAllProducts(Pageable pageable){
-        return productRepository.findAllSummaries(pageable);
-    }
 
-    // get de detalhes do produto
-    public ProductDetailsResponse getProductDetails(Long productId){
-        Product product = globalHelperService.getActiveProductOrThrow(productId);
-        return productMapper.toDetailsResponse(product);
-    }
+    // ========== ROLE ADMIN ==========
 
     // criar produtos
     @Transactional
@@ -64,6 +58,9 @@ public class ProductService {
 
         // cria os atributos e as opções para eles
         createAttributesAndOptions(product, request.attributes());
+
+        // cria as keywords
+        productKeywordService.createKeywords(product, request.keywords());
 
         // salva o produto
         Product productSave = productRepository.save(product);
@@ -111,6 +108,23 @@ public class ProductService {
             }
         }
     }
+
+
+
+    // ========== ROLE USER ==========
+
+    // get de todos os produtos ativos juntamente com o menor preço dentre as suas variantes
+    public Page<ProductSumaryResponse> getAllProducts(Pageable pageable){
+        return productRepository.findAllSummaries(pageable);
+    }
+
+    // get de detalhes do produto
+    public ProductDetailsResponse getProductDetails(Long productId){
+        Product product = globalHelperService.getActiveProductOrThrow(productId);
+        return productMapper.toDetailsResponse(product);
+    }
+
+
 
 
 }

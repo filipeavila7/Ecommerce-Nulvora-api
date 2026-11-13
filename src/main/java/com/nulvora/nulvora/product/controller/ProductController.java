@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.product.controller;
 
 import com.nulvora.nulvora.product.dto.request.ProductRequest;
+import com.nulvora.nulvora.product.dto.request.ProductUpdateRequest;
 import com.nulvora.nulvora.product.dto.response.ProductDetailsResponse;
 import com.nulvora.nulvora.product.dto.response.ProductResponse;
 
@@ -44,6 +45,14 @@ public class ProductController {
         return ResponseEntity.ok(
                 productService.getProductDetails(productId)
         );
+    }
+
+    @PatchMapping("/{productId}/update")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductUpdateRequest request
+    ){
+        return ResponseEntity.ok(productService.updateProduct(productId, request));
     }
 
 }

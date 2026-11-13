@@ -37,6 +37,8 @@ public class ProductVariantService {
 
     // get de todas as variantes pelo id do produto
     public Page<ProductVariantResponse> getAllVariants(Long productId, Pageable pageable){
+        globalHelperService.getActiveProductOrThrow(productId);
+
         return productVariantRepository.findAllByProductIdAndActiveTrue(productId, pageable)
                 .map(productVariantMapper::toProductVariantResponse);
 
@@ -107,6 +109,8 @@ public class ProductVariantService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Variante não encontrada"));
 
+        // verifica se o produto a quem a variante pertence esta ativo
+        globalHelperService.getActiveProductOrThrow(productVariant.getProduct().getId());
 
         // edita somente os campos que não são nulos
         productVariantMapper.updateEntity(request, productVariant);
@@ -127,6 +131,9 @@ public class ProductVariantService {
         ProductVariant productVariant = productVariantRepository.findByIdAndActiveTrue(variantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Variante não encontrada"));
+
+        // verifica se o produto a quem a variante pertence esta ativo
+        globalHelperService.getActiveProductOrThrow(productVariant.getProduct().getId());
 
         ProductImg variantImg = productImgService.updateVariantImgs(productVariant.getId(), request);
 

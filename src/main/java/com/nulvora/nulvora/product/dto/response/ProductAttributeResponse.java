@@ -5,5 +5,5 @@ import java.util.List;
 public record ProductAttributeResponse(
         Long id,
         String name,
-        List<String> options
+        List<AttributeOptionResponse> options
 ) {}

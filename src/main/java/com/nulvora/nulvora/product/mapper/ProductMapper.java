@@ -2,18 +2,13 @@ package com.nulvora.nulvora.product.mapper;
 
 import com.nulvora.nulvora.product.dto.request.ProductRequest;
 import com.nulvora.nulvora.product.dto.request.ProductUpdateRequest;
-import com.nulvora.nulvora.product.dto.response.ProductAttributeResponse;
-import com.nulvora.nulvora.product.dto.response.ProductDetailsResponse;
-import com.nulvora.nulvora.product.dto.response.ProductResponse;
+import com.nulvora.nulvora.product.dto.response.*;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productAttributeOption.entity.ProductAttributeOption;
-import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
-import com.nulvora.nulvora.productVariant.entity.ProductVariant;
+import com.nulvora.nulvora.productKeywords.entity.ProductKeyword;
 import com.nulvora.nulvora.productVariant.mapper.ProductVariantMapper;
 import org.mapstruct.*;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring",  uses = {ProductVariantMapper.class})
 public interface ProductMapper {
@@ -30,10 +25,11 @@ public interface ProductMapper {
     // transformar ProductAttribute em ProductAttributeResponse
     ProductAttributeResponse toProductAttributeResponse(ProductAttribute productAttribute);
 
-    // transformar ProductAttributeOption em string getValue()
-    default String toOptionResponse(ProductAttributeOption option) {
-        return option.getValue();
-    }
+    // transformar ProductKeyword em ProductKeywordResponse
+    ProductKeywordResponse toProductKeywordResponse(ProductKeyword productKeyword);
+
+    // transformar ProductAttributeOption em  AttributeOptionResponse
+    AttributeOptionResponse toOptionResponse(ProductAttributeOption option);
 
     // atualizar somente campos não nulos de product
     @Mapping(target = "id", ignore = true)

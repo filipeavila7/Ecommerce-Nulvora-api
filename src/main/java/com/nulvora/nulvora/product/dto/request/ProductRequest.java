@@ -23,9 +23,12 @@ public record ProductRequest(
         @Size(max = 300, message = "A url da imagem é muito grande")
         String imageUrl,
 
-       List<ProductAttributeRequest> attributes
+        // opcional
+        List<ProductAttributeRequest> attributes,
 
-
+        // opcional
+        @Size(max = 10, message = "No máximo 10 palavras chave por produto")
+        List<@NotBlank String> keywords
 
 
 

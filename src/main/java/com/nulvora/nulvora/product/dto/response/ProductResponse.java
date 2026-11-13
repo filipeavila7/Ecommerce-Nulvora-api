@@ -11,7 +11,8 @@ public record ProductResponse(
         String imageUrl,
         boolean isActive,
         LocalDateTime createdAt,
-        List<ProductAttributeResponse> attributes
+        List<ProductAttributeResponse> attributes,
+        List<ProductKeywordResponse> productKeywords
 
 ) {
 }
