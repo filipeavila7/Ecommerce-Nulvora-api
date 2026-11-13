@@ -12,6 +12,7 @@ import com.nulvora.nulvora.product.dto.response.ProductSumaryResponse;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.mapper.ProductMapper;
 import com.nulvora.nulvora.product.repository.ProductRepository;
+import com.nulvora.nulvora.product.specification.ProductSpecification;
 import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productAttribute.service.ProductAttributeService;
 import com.nulvora.nulvora.productAttributeOption.entity.ProductAttributeOption;
@@ -21,12 +22,17 @@ import com.nulvora.nulvora.productVariant.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -123,6 +129,47 @@ public class ProductService {
         Product product = globalHelperService.getActiveProductOrThrow(productId);
         return productMapper.toDetailsResponse(product);
     }
+
+
+    // pesquisar produtos pelo nome, descrição, sku e keywords
+
+    public Page<ProductSumaryResponse> search(
+            String search,
+            Pageable pageable
+    ) {
+        Specification<Product> spec = ProductSpecification.isActive();
+
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(ProductSpecification.searchText(search));
+        }
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
+
+        if (products.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Long> productIds = products.getContent()
+                .stream()
+                .map(Product::getId)
+                .toList();
+
+        Map<Long, BigDecimal> minPrices = new HashMap<>();
+
+        productRepository.findMinPricesByProductIds(productIds)
+                .forEach(row -> minPrices.put(
+                        (Long) row[0],
+                        (BigDecimal) row[1]
+                ));
+
+        return products.map(product -> new ProductSumaryResponse(
+                product.getId(),
+                product.getName(),
+                product.getImageUrl(),
+                minPrices.get(product.getId())
+        ));
+    }
+
 
 
 

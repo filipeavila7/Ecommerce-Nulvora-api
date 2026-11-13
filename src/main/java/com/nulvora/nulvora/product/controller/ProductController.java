@@ -55,4 +55,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(productId, request));
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductSumaryResponse>> search(
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 12) Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                productService.search(search, pageable)
+        );
+    }
+
+
 }

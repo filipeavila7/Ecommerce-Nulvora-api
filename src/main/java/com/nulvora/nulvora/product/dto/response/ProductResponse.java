@@ -9,6 +9,7 @@ public record ProductResponse(
         String name,
         String categoryName,
         String imageUrl,
+        String description,
         boolean isActive,
         LocalDateTime createdAt,
         List<ProductAttributeResponse> attributes,

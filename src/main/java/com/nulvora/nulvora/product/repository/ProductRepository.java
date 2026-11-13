@@ -5,13 +5,17 @@ import com.nulvora.nulvora.product.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>,
+        JpaSpecificationExecutor<Product> {
 
     Optional<Product> findByIdAndActiveTrue(Long productId);
 
@@ -31,6 +35,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     GROUP BY p.id, p.name, p.imageUrl
 """)
     Page<ProductSumaryResponse> findAllSummaries(Pageable pageable);
+
+
+
+    @Query("""
+    SELECT p.id, MIN(v.price)
+    FROM Product p
+    LEFT JOIN p.productVariants v ON v.active = true
+    WHERE p.id IN :productIds
+    GROUP BY p.id
+""")
+    List<Object[]> findMinPricesByProductIds(
+            @Param("productIds") List<Long> productIds
+    );
+
 
 
 }
