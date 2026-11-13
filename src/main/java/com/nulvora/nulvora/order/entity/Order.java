@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+
 @Entity
 @Getter
 @Setter
@@ -32,10 +32,15 @@ public class Order extends BaseEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
 
+    // preço antes dos descontos
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal subTotal;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    // o CacadeType.ALL permite tambem que salve os orderItens automaticamente apos salvar a order
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
