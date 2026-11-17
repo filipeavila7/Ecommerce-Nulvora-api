@@ -103,6 +103,7 @@ public class ProductVariantService {
     }
 
     // editar variante (atributos da variante e opções)
+    // Todo - verificar se o sku passado pra editar ja existe
     @Transactional
     public ProductVariantResponse updateVariant(Long variantId, ProductVariantUpdateRequest request){
         ProductVariant productVariant = productVariantRepository.findByIdAndActiveTrue(variantId)
@@ -150,7 +151,7 @@ public class ProductVariantService {
     }
 
     // caso o sku aleatório ja exista, cria outro
-    public String generateUniqueSku() {
+    private String generateUniqueSku() {
         String sku;
 
         do {
