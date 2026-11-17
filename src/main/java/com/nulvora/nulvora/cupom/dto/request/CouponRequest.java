@@ -36,6 +36,10 @@ public record CouponRequest(
         @Future(message = "A data de início deve ser futura")
         LocalDateTime startAt,
 
+        @NotNull
+        @Positive(message = "O limite de utilizações deve ser maior que zero")
+        Integer maxUsagePerUser,
+
         @NotNull(message = "A data de expiração é obrigatória")
         @Future(message = "A data de expiração deve ser futura")
         LocalDateTime expireAt

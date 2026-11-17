@@ -6,6 +6,7 @@ import com.nulvora.nulvora.cart.entity.Cart;
 import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.profile.entity.Profile;
 import com.nulvora.nulvora.review.entity.Review;
+import com.nulvora.nulvora.userCoupon.entity.UserCoupon;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +51,8 @@ public class User  {
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserCoupon> coupons = new ArrayList<>();
 
 
 }

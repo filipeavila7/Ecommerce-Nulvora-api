@@ -355,13 +355,13 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
     - Consulta de rastreamento pelo cliente autenticado (`GET /orders/{orderId}/tracking`).
     - Atualização de eventos por operadores administrativos (`POST /admin/shipments/{id}/events`).
 
-- [ ] **[P2]** **Módulo de Cupons e Descontos (`cupom` / `userCupom` / `promotions`)**
-  - Estado Atual: Entidades `Coupon`, `Promotion` e `WishList` vazias. `UserCupom` possui campos `used`, `usedAt`, `user`, `cupom`.
+- [ ] **[P2]** **Módulo de Cupons e Descontos (`cupom` / `UserCoupon` / `promotions`)**
+  - Estado Atual: Entidades `Coupon`, `Promotion` e `WishList` vazias. `UserCoupon` possui campos `used`, `usedAt`, `user`, `cupom`.
   - [ ] Estruturar entidade `Coupon`:
     - Campos: `code` (único, letras maiúsculas), `DiscountType` (PERCENTAGE, FIXED_VALUE), `discountValue`, `minOrderValue`, `startDate`, `expirationDate`, `usageLimit`, `usageCount`, `active`.
   - [ ] Implementar `CouponService`:
     - Validação de código de cupom na simulação do carrinho/checkout.
-    - Impedir reutilização se o cupom for de uso único por cliente via `UserCupom`.
+    - Impedir reutilização se o cupom for de uso único por cliente via `UserCoupon`.
     - Atualização atômica do contador de usos.
   - [ ] Decisão Pendente: Módulo `promotions` terá regras de descontos automáticos por categoria ou continuará simplificado apenas via cupom?
 

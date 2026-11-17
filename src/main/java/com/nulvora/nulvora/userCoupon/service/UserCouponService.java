@@ -1,0 +1,110 @@
+package com.nulvora.nulvora.userCoupon.service;
+
+import com.nulvora.nulvora.cupom.entity.Coupon;
+import com.nulvora.nulvora.cupom.repository.CouponRepository;
+import com.nulvora.nulvora.helper.GlobalHelperService;
+import com.nulvora.nulvora.user.entity.User;
+import com.nulvora.nulvora.userCoupon.dto.response.UserCouponResponse;
+import com.nulvora.nulvora.userCoupon.entity.UserCoupon;
+import com.nulvora.nulvora.userCoupon.mapper.UserCouponMapper;
+import com.nulvora.nulvora.userCoupon.repository.UserCouponRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+public class UserCouponService {
+    private final UserCouponRepository userCouponRepository;
+    private final CouponRepository couponRepository;
+    private final GlobalHelperService globalHelperService;
+    private final UserCouponMapper userCouponMapper;
+
+
+    // TODO - criar tests para testar exceções do metodo validateCoupon
+    // usuario resgatar cupom
+    public UserCouponResponse createUserCoupon(Long couponId){
+        User loggedUser = globalHelperService.getLoggedUser();
+
+        // valida cupom
+        Coupon coupon = validateCoupon(couponId, loggedUser.getId());
+
+        // cria relação
+        UserCoupon userCoupon = new UserCoupon();
+        userCoupon.setUsageLimit(coupon.getMaxUsagePerUser());
+        userCoupon.setUsageCount(0);
+        userCoupon.setUser(loggedUser);
+        userCoupon.setAssignedAt(LocalDateTime.now());
+
+        return userCouponMapper.toResponse(userCouponRepository.save(userCoupon));
+    }
+
+
+    // validação de cupom
+    public Coupon validateCoupon(Long couponId){
+        LocalDateTime now = LocalDateTime.now();
+
+        // busca o cupom
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Cupom não encontrado"));
+
+        // verifica se o cupom esta ativo
+        if (!coupon.isActivate()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Esse cupom não está ativo");
+        }
+
+        if (now.isBefore(coupon.getStartAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Esse cupom ainda não está disponível");
+        }
+
+        if (!now.isBefore(coupon.getExpireAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Esse cupom expirou");
+        }
+
+        return coupon;
+    }
+
+
+    // validação completa do cupom com usuario
+    public Coupon validateCoupon(Long couponId, Long userId){
+        LocalDateTime now = LocalDateTime.now();
+
+        // busca o cupom
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Cupom não encontrado"));
+
+        // verifica se o usuario ja resgatou
+        if (userCouponRepository.existsByUserIdAndCouponId(userId, couponId)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Você ja resgatou esse cupom");
+        }
+
+        // verifica se o cupom esta ativo
+        if (!coupon.isActivate()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Esse cupom não está ativo");
+        }
+
+        if (now.isBefore(coupon.getStartAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Esse cupom ainda não está disponível");
+        }
+
+        if (!now.isBefore(coupon.getExpireAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Esse cupom expirou");
+        }
+
+        return coupon;
+    }
+
+
+}

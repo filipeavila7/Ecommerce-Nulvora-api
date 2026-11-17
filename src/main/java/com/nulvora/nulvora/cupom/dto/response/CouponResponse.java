@@ -17,6 +17,7 @@ public record CouponResponse(
         LocalDateTime startAt,
         LocalDateTime expireAt,
         LocalDateTime createAt,
+        Integer maxUsagePerUser,
         boolean activate
 
 ) {

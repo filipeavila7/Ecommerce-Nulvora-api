@@ -23,6 +23,9 @@ public class Coupon extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private Integer maxUsagePerUser;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CouponType couponType;
