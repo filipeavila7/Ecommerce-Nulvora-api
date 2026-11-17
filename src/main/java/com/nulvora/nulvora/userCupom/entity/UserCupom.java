@@ -1,6 +1,6 @@
 package com.nulvora.nulvora.userCupom.entity;
 
-import com.nulvora.nulvora.cupom.entity.Cupom;
+import com.nulvora.nulvora.cupom.entity.Coupon;
 import com.nulvora.nulvora.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class UserCupom {
 
     @ManyToOne
     @JoinColumn(name = "cupom_id")
-    private Cupom cupom;
+    private Coupon cupom;
 
     private Boolean used = false;
 

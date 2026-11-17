@@ -17,7 +17,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orders")
+@Table(name = "orders",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_order_variant", // não permite a mesma variante duas vezes na order
+                        columnNames = {"order_id", "product_variant_id"}
+                )
+        }
+)
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +34,7 @@ public class Order extends BaseEntity {
     private OrderStatus status;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal discount;
+    private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal total;

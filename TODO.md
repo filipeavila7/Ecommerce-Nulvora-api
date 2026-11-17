@@ -72,7 +72,7 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
     - Atualmente `Payment` possui `@OneToOne` bidirecional com `Order`, porém não há `@JoinColumn` mapeado no lado de `Order` e sem cascade claro.
   - [ ] Corrigir entidade `ProductKeyword`:
     - Atualmente possui apenas `@Id Long id`. Vincular com `Product` (`@ManyToMany` ou `@ElementCollection`) e campo de texto `keyword`.
-  - [ ] Completar entidades mínimas vazias: `Cupom`, `Shipment`, `WishList`, `Notification`.
+  - [ ] Completar entidades mínimas vazias: `Coupon`, `Shipment`, `WishList`, `Notification`.
 
 - [ ] **[P0]** **Substituição do `ddl-auto=update` por Migrations com Flyway**
   - [ ] Adicionar dependência do Flyway (`flyway-core`, `flyway-mysql`) no `pom.xml`.
@@ -356,10 +356,10 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
     - Atualização de eventos por operadores administrativos (`POST /admin/shipments/{id}/events`).
 
 - [ ] **[P2]** **Módulo de Cupons e Descontos (`cupom` / `userCupom` / `promotions`)**
-  - Estado Atual: Entidades `Cupom`, `Promotion` e `WishList` vazias. `UserCupom` possui campos `used`, `usedAt`, `user`, `cupom`.
-  - [ ] Estruturar entidade `Cupom`:
-    - Campos: `code` (único, letras maiúsculas), `discountType` (PERCENTAGE, FIXED_VALUE), `discountValue`, `minOrderValue`, `startDate`, `expirationDate`, `usageLimit`, `usageCount`, `active`.
-  - [ ] Implementar `CupomService`:
+  - Estado Atual: Entidades `Coupon`, `Promotion` e `WishList` vazias. `UserCupom` possui campos `used`, `usedAt`, `user`, `cupom`.
+  - [ ] Estruturar entidade `Coupon`:
+    - Campos: `code` (único, letras maiúsculas), `DiscountType` (PERCENTAGE, FIXED_VALUE), `discountValue`, `minOrderValue`, `startDate`, `expirationDate`, `usageLimit`, `usageCount`, `active`.
+  - [ ] Implementar `CouponService`:
     - Validação de código de cupom na simulação do carrinho/checkout.
     - Impedir reutilização se o cupom for de uso único por cliente via `UserCupom`.
     - Atualização atômica do contador de usos.

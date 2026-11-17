@@ -25,7 +25,11 @@ public class OrderService {
     private final OrderMapper orderMapper;
 
 
-
+    // TODO - criar logica de cupons e calcular total da order
+    // TODO - testar essa service, response etc
+    // TODO - criar logica de calculo de frete e dar um jeito de mostrar na response
+    // TODO - criar metodo pra validar se pode aplicar o cupom
+    // TODO - tratar duplicados no caso de mandar 2 variantes iguais para uma order (o banco ja trata mas é seguraça extra)
     @Transactional
     public OrderResponse createOrder(OrderRequest request){
         User loggedUser = globalHelperService.getLoggedUser();

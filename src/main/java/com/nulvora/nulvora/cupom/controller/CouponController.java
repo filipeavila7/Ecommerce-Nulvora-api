@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/cupom")
-public class CupomController {
+public class CouponController {
 }
