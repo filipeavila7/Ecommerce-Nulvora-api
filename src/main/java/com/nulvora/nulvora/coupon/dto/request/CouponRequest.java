@@ -1,8 +1,8 @@
 
-package com.nulvora.nulvora.cupom.dto.request;
+package com.nulvora.nulvora.coupon.dto.request;
 
-import com.nulvora.nulvora.cupom.entity.CouponType;
-import com.nulvora.nulvora.cupom.entity.DiscountType;
+import com.nulvora.nulvora.coupon.entity.CouponType;
+import com.nulvora.nulvora.coupon.entity.DiscountType;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

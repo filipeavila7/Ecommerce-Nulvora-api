@@ -1,4 +1,4 @@
-package com.nulvora.nulvora.cupom.entity;
+package com.nulvora.nulvora.coupon.entity;
 
 import com.nulvora.nulvora.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -35,7 +35,7 @@ public class Coupon extends BaseEntity {
     private DiscountType discountType;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal maxDiscount;
+    private BigDecimal discountValue;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal minOrderValue;

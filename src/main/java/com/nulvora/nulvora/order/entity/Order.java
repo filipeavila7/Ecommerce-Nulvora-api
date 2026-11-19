@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.order.entity;
 
 import com.nulvora.nulvora.common.entity.BaseEntity;
+import com.nulvora.nulvora.coupon.entity.Coupon;
 import com.nulvora.nulvora.orderItens.entity.OrderItem;
 import com.nulvora.nulvora.payment.entity.Payment;
 import com.nulvora.nulvora.user.entity.User;
@@ -43,6 +44,10 @@ public class Order extends BaseEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal subTotal;
 
+    // preço do frete
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal shippingCost;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -53,4 +58,9 @@ public class Order extends BaseEntity {
 
     @OneToOne(mappedBy = "order")
     private Payment payment;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 }

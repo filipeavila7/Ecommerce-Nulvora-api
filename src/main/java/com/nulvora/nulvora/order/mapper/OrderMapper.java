@@ -1,5 +1,7 @@
 package com.nulvora.nulvora.order.mapper;
 
+import com.nulvora.nulvora.coupon.entity.Coupon;
+import com.nulvora.nulvora.coupon.mapper.CouponMapper;
 import com.nulvora.nulvora.order.dto.response.OrderResponse;
 import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.orderItens.dto.response.OrderItemResponse;
@@ -10,8 +12,9 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = CouponMapper.class)
 public interface OrderMapper {
+
 
     OrderResponse toOrderResponse(Order order);
 

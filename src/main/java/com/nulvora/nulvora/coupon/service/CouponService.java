@@ -1,11 +1,11 @@
-package com.nulvora.nulvora.cupom.service;
+package com.nulvora.nulvora.coupon.service;
 
-import com.nulvora.nulvora.cupom.dto.request.CouponRequest;
-import com.nulvora.nulvora.cupom.dto.request.CouponUpdateRequest;
-import com.nulvora.nulvora.cupom.dto.response.CouponResponse;
-import com.nulvora.nulvora.cupom.entity.Coupon;
-import com.nulvora.nulvora.cupom.mapper.CouponMapper;
-import com.nulvora.nulvora.cupom.repository.CouponRepository;
+import com.nulvora.nulvora.coupon.dto.request.CouponRequest;
+import com.nulvora.nulvora.coupon.dto.request.CouponUpdateRequest;
+import com.nulvora.nulvora.coupon.dto.response.CouponResponse;
+import com.nulvora.nulvora.coupon.entity.Coupon;
+import com.nulvora.nulvora.coupon.mapper.CouponMapper;
+import com.nulvora.nulvora.coupon.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
-package com.nulvora.nulvora.cupom.mapper;
+package com.nulvora.nulvora.coupon.mapper;
 
-import com.nulvora.nulvora.cupom.dto.request.CouponRequest;
-import com.nulvora.nulvora.cupom.dto.request.CouponUpdateRequest;
-import com.nulvora.nulvora.cupom.dto.response.CouponResponse;
-import com.nulvora.nulvora.cupom.entity.Coupon;
+import com.nulvora.nulvora.coupon.dto.request.CouponRequest;
+import com.nulvora.nulvora.coupon.dto.request.CouponUpdateRequest;
+import com.nulvora.nulvora.coupon.dto.response.CouponResponse;
+import com.nulvora.nulvora.coupon.entity.Coupon;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

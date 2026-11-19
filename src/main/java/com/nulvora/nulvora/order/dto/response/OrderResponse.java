@@ -1,5 +1,6 @@
 package com.nulvora.nulvora.order.dto.response;
 
+import com.nulvora.nulvora.coupon.dto.response.CouponResponse;
 import com.nulvora.nulvora.order.entity.OrderStatus;
 import com.nulvora.nulvora.orderItens.dto.response.OrderItemResponse;
 
@@ -15,7 +16,8 @@ public record OrderResponse(
         BigDecimal shippingCost, // preço do frete
         BigDecimal subTotal,
         LocalDateTime createdAt,
-        List<OrderItemResponse> orderItems
+        List<OrderItemResponse> orderItems,
+        CouponResponse coupon
 
 
 ) {

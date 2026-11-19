@@ -11,6 +11,6 @@ public record OrderRequest(
         @NotEmpty
         List<@Valid OrderItemRequest> items, // lista com id e quantidade dos produtos
 
-        Long userCouponId // opcional
+        String couponCode // codigo de cupom opcional
 
 ) {}

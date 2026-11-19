@@ -1,4 +1,4 @@
-package com.nulvora.nulvora.cupom.entity;
+package com.nulvora.nulvora.coupon.entity;
 
 public enum DiscountType {
     PERCENTAGE, // porcentagem

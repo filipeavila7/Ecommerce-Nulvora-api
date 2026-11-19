@@ -1,7 +1,7 @@
 package com.nulvora.nulvora.userCoupon.entity;
 
 
-import com.nulvora.nulvora.cupom.entity.Coupon;
+import com.nulvora.nulvora.coupon.entity.Coupon;
 import com.nulvora.nulvora.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
