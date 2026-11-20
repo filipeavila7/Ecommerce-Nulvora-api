@@ -14,6 +14,7 @@ public class ProfileService {
 
     public void createUserProfile(User user){
         Profile profile = new Profile(null, null, user);
+        user.setProfile(profile);
 
         profileRepository.save(profile);
     }

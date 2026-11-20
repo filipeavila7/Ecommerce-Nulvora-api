@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,6 +26,8 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     Page<ProductVariant> findAllByProductIdAndActiveTrue(Long productId, Pageable pageable);
 
+
+    List<ProductVariant> findAllByIdInAndActiveTrue(Collection<Long> ids);
 
     boolean existsBySku(String sku);
 

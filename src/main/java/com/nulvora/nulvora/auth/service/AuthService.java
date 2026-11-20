@@ -4,6 +4,7 @@ package com.nulvora.nulvora.auth.service;
 
 import com.nulvora.nulvora.auth.dto.request.AuthRequest;
 import com.nulvora.nulvora.auth.dto.response.TokenResponse;
+import com.nulvora.nulvora.cart.service.CartService;
 import com.nulvora.nulvora.jwt.JwtService;
 import com.nulvora.nulvora.profile.service.ProfileService;
 import com.nulvora.nulvora.refreshToken.dto.response.RotatedRefreshToken;
@@ -30,7 +31,10 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
     private final ProfileService profileService;
+    private final CartService cartService;
 
+
+    // registro de usuario
     public TokenResponse register(UserRequest request) {
         String email = normalizeEmail(request.email());
 
@@ -52,6 +56,9 @@ public class AuthService {
 
         // cria uma profile pro usuario
         profileService.createUserProfile(user);
+
+        // cria um carrinho pro usuario
+        cartService.createCartForUser(user);
 
         userRepository.save(user);
 
