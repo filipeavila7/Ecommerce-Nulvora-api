@@ -8,9 +8,11 @@ import java.util.List;
 
 public record CartItemResponse(
         Long id,
-        List<ProductVariantCartResponse> productVariant,
+        ProductVariantCartResponse productVariant,
         Integer quantity,
-        BigDecimal subtotal
+        BigDecimal subtotal,
+        boolean available,
+        CartItemUnavailableReason unavailableReason
 
 ) {
 }

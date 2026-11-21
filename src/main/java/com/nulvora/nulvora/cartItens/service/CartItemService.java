@@ -1,23 +1,30 @@
 package com.nulvora.nulvora.cartItens.service;
 
+import com.nulvora.nulvora.cart.dto.response.CartResponse;
 import com.nulvora.nulvora.cart.entity.Cart;
 import com.nulvora.nulvora.cart.repository.CartRepository;
 import com.nulvora.nulvora.cartItens.dto.request.CartItemRequest;
+import com.nulvora.nulvora.cartItens.dto.response.CartItemPostResponse;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemResponse;
+import com.nulvora.nulvora.cartItens.dto.response.CartItemUnavailableReason;
 import com.nulvora.nulvora.cartItens.entity.CartItem;
 import com.nulvora.nulvora.cartItens.mapper.CartItemMapper;
 import com.nulvora.nulvora.cartItens.repository.CartItemRepository;
 import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
+import com.nulvora.nulvora.productVariant.mapper.ProductVariantMapper;
 import com.nulvora.nulvora.productVariant.repository.ProductVariantRepository;
 import com.nulvora.nulvora.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +34,15 @@ public class CartItemService {
     private final ProductVariantRepository productVariantRepository;
     private final GlobalHelperService globalHelperService;
     private final CartItemMapper cartItemMapper;
+    private final ProductVariantMapper productVariantMapper;
 
-    // TODO - no get dos itens no carrinho, verificar se a variante esta disponivel ou se tem estoque suficiente
+
+
     // TODO - verificar tb antes de finalizar a compra e tb se atentar a compras simultâneas
 
     // adcioanar itens no carrinho
     @Transactional
-    public CartItemResponse addItensInCart(CartItemRequest request){
+    public CartItemPostResponse addItensInCart(CartItemRequest request){
         User loggedUser = globalHelperService.getLoggedUser();
 
         // pega o carrinho do usuario
@@ -77,6 +86,64 @@ public class CartItemService {
 
 
         return cartItemMapper.toResponse(cartItemRepository.save(cartItem), subTotal);
+    }
+
+
+    public Page<CartItemResponse> getMyCartItems(Pageable pageable){
+        Long cartId = globalHelperService.getLoggedUser().getCart().getId();
+
+        // pega o carrinho do usuario
+        cartRepository.findByUserId(cartId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Carrinho não encontrado"));
+
+        // pega todos os itens paginados
+        Page<CartItem> cartItens = cartItemRepository.findByCartId(cartId, pageable);
+
+        // percorre eles
+        return cartItens.map(item -> {
+                    // pega a variante
+                    ProductVariant variant = item.getProductVariant();
+
+                    // calcula subtotal
+                    BigDecimal subTotal = variant.getPrice()
+                            .multiply(BigDecimal.valueOf(item.getQuantity()));
+
+
+                    // caso a variante esteja inativa mas ainda dentro do carrinho ou não tenha estoque o suficiente
+                    CartItemUnavailableReason reason = checkAvailability(item);
+
+                    boolean available = reason == null;
+
+                     // monsta o dto
+                    return new CartItemResponse(
+                            item.getId(),
+                            productVariantMapper.toProductVariantCartResponse(variant),
+                            item.getQuantity(),
+                            subTotal,
+                            available,
+                            reason
+                    );
+
+                });
+    }
+
+
+    private CartItemUnavailableReason checkAvailability(CartItem cartItem) {
+        ProductVariant variant = cartItem.getProductVariant();
+
+        if (!variant.isActive()) {
+
+            return CartItemUnavailableReason.INACTIVE;
+
+        }
+
+        if (variant.getStockQuantity() < cartItem.getQuantity()) {
+
+            return CartItemUnavailableReason.OUT_OF_STOCK;
+        }
+
+        return null;
     }
 
 }

@@ -6,6 +6,7 @@ import com.nulvora.nulvora.productImg.entity.ProductImg;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantUpdateRequest;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantAttributesResponse;
+import com.nulvora.nulvora.productVariant.dto.response.ProductVariantCartResponse;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
@@ -31,6 +32,22 @@ public interface ProductVariantMapper {
     ProductVariant toEntity(ProductVariantRequest request);
 
 
+
+    @Mapping(source = "product.name", target = "productName")
+    @Mapping(source = "name", target = "variantName")
+    @Mapping(source = "price", target = "price")
+    @Mapping(source = "productImgs", target = "variantImgPrimary")
+    ProductVariantCartResponse toProductVariantCartResponse(ProductVariant productVariant);
+
+
+    // pegar so a foto primary das listas de imagens do produto
+    default String getPrimaryImage(List<ProductImg> productImgs) {
+        return productImgs.stream()
+                .filter(ProductImg::isPrimary)
+                .map(ProductImg::getImageUrl)
+                .findFirst()
+                .orElse(null);
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product", ignore = true)
