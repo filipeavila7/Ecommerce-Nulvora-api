@@ -20,6 +20,8 @@ public record ProductVariantUpdateRequest(
         @PositiveOrZero(message = "O estoque não pode ser negativo")
         Integer stockQuantity,
 
+        Boolean activate,
+
         Set<@NotNull Long> optionsIds
 
 ) {

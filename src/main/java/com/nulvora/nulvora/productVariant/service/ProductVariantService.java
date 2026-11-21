@@ -106,7 +106,7 @@ public class ProductVariantService {
     // Todo - verificar se o sku passado pra editar ja existe
     @Transactional
     public ProductVariantResponse updateVariant(Long variantId, ProductVariantUpdateRequest request){
-        ProductVariant productVariant = productVariantRepository.findByIdAndActiveTrue(variantId)
+        ProductVariant productVariant = productVariantRepository.findById(variantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Variante não encontrada"));
 
@@ -122,6 +122,9 @@ public class ProductVariantService {
             variantAttributeService.updateVariantAttributes(productVariant, request.optionsIds());
         }
 
+        if (request.activate() != null){
+            productVariant.setActive(request.activate());
+        }
 
         return productVariantMapper.toProductVariantResponse(productVariantRepository.save(productVariant));
 

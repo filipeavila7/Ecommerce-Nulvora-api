@@ -4,6 +4,7 @@ import com.nulvora.nulvora.cart.dto.response.CartResponse;
 import com.nulvora.nulvora.cart.entity.Cart;
 import com.nulvora.nulvora.cart.repository.CartRepository;
 import com.nulvora.nulvora.cartItens.dto.request.CartItemRequest;
+import com.nulvora.nulvora.cartItens.dto.request.CartItemUpdateRequest;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemPostResponse;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemResponse;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemUnavailableReason;
@@ -82,23 +83,23 @@ public class CartItemService {
 
         // calcula o subtotal com o preço atual do produto
         BigDecimal subTotal = productVariant.getPrice()
-                .multiply(BigDecimal.valueOf(request.quantity()));
+                .multiply(BigDecimal.valueOf(newQuantity));
 
 
         return cartItemMapper.toResponse(cartItemRepository.save(cartItem), subTotal);
     }
 
-
+    // get de todos os itens do carrinho
     public Page<CartItemResponse> getMyCartItems(Pageable pageable){
-        Long cartId = globalHelperService.getLoggedUser().getCart().getId();
+        User loggedUser = globalHelperService.getLoggedUser();
 
         // pega o carrinho do usuario
-        cartRepository.findByUserId(cartId)
+        Cart cart = cartRepository.findByUserId(loggedUser.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Carrinho não encontrado"));
 
         // pega todos os itens paginados
-        Page<CartItem> cartItens = cartItemRepository.findByCartId(cartId, pageable);
+        Page<CartItem> cartItens = cartItemRepository.findByCartId(cart.getId(), pageable);
 
         // percorre eles
         return cartItens.map(item -> {
@@ -129,6 +130,45 @@ public class CartItemService {
     }
 
 
+    // adiconar ou remover quantidade de variantes dentro do carrinho
+    @Transactional
+    public CartItemPostResponse updateCartItemQuantity(CartItemUpdateRequest request, Long cartItemId){
+        User loggedUser = globalHelperService.getLoggedUser();
+
+        // pega o carrinho do usuario
+        Cart cart = cartRepository.findByUserId(loggedUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Carrinho não encontrado"));
+
+        // acha a relação
+        CartItem cartItem = cartItemRepository.findByIdAndCartId(cartItemId, cart.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Item não encontrado"));
+
+        // pega a variante
+        ProductVariant productVariant = productVariantRepository.
+                findByIdAndActiveTrue(cartItem.getProductVariant().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Variante não encontrada"));
+
+        // caso a quantidade seja maior do que a do estoque disponível da variante
+        if (request.quantity() > productVariant.getStockQuantity()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Estoque insuficiente");
+        }
+
+        // seta a nova quantidade
+        cartItem.setQuantity(request.quantity());
+
+        // calcula subtotal
+        BigDecimal subtotal = productVariant.getPrice()
+                .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+
+        return cartItemMapper.toResponse(cartItem, subtotal);
+
+    }
+
+
+    // checa se variante esta inativa ou não tenha estoque o suficiente mas ainda esta dentro do carrinho
     private CartItemUnavailableReason checkAvailability(CartItem cartItem) {
         ProductVariant variant = cartItem.getProductVariant();
 
