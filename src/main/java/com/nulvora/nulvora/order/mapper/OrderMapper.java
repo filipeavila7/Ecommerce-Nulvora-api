@@ -2,6 +2,7 @@ package com.nulvora.nulvora.order.mapper;
 
 import com.nulvora.nulvora.coupon.entity.Coupon;
 import com.nulvora.nulvora.coupon.mapper.CouponMapper;
+import com.nulvora.nulvora.order.dto.response.OrderCheckoutResponse;
 import com.nulvora.nulvora.order.dto.response.OrderResponse;
 import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.orderItens.dto.response.OrderItemResponse;
@@ -17,6 +18,9 @@ public interface OrderMapper {
 
 
     OrderResponse toOrderResponse(Order order);
+
+    @Mapping(target = "checkoutUrl", source = "checkoutUrl")
+    OrderCheckoutResponse toOrderCheckoutResponse(Order order, String checkoutUrl);
 
     @Mapping(target = "productVariantId", source = "productVariant.id")
     @Mapping(target = "productName", source = "productVariant.product.name")

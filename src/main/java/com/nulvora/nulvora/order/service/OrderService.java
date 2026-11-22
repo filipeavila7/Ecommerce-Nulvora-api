@@ -1,10 +1,12 @@
 package com.nulvora.nulvora.order.service;
 
+import com.nulvora.nulvora.api.stripe.dto.response.StripeCheckoutResponse;
 import com.nulvora.nulvora.coupon.entity.Coupon;
 import com.nulvora.nulvora.coupon.repository.CouponRepository;
 import com.nulvora.nulvora.coupon.service.CouponService;
 import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.order.dto.request.OrderRequest;
+import com.nulvora.nulvora.order.dto.response.OrderCheckoutResponse;
 import com.nulvora.nulvora.order.dto.response.OrderResponse;
 import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.order.entity.OrderStatus;
@@ -12,9 +14,12 @@ import com.nulvora.nulvora.order.mapper.OrderMapper;
 import com.nulvora.nulvora.order.repository.OrderRepository;
 import com.nulvora.nulvora.orderItens.entity.OrderItem;
 import com.nulvora.nulvora.orderItens.service.OrderItemService;
+import com.nulvora.nulvora.payment.entity.Payment;
+import com.nulvora.nulvora.payment.service.PaymentService;
 import com.nulvora.nulvora.user.entity.User;
 import com.nulvora.nulvora.userCoupon.entity.UserCoupon;
 import com.nulvora.nulvora.userCoupon.service.UserCouponService;
+import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,16 +38,14 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final CouponRepository couponRepository;
     private final UserCouponService userCouponService;
+    private final PaymentService paymentService;
+
 
     // TODO - fazer integração com api de cálculo de frete
-    // TODO - criar logica de cupons e calcular total da order
-    // TODO - testar essa service, response etc
-    // TODO - criar tests para testar comportamento dos cupons
     // TODO - criar logica de calculo de frete e dar um jeito de mostrar na response
-    // TODO - criar metodo pra validar se pode aplicar o cupom
     // TODO - tratar duplicados no caso de mandar 2 variantes iguais para uma order (o banco ja trata mas é seguraça extra)
-    @Transactional
-    public OrderResponse createOrder(OrderRequest request){
+    @Transactional(rollbackFor = StripeException.class)
+    public OrderCheckoutResponse createOrder(OrderRequest request) throws StripeException {
         User loggedUser = globalHelperService.getLoggedUser();
 
         // cria o objeto de order
@@ -80,7 +83,17 @@ public class OrderService {
             applyCoupon(order, coupon);
         }
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        // salva o pedido
+        Order savedOrder = orderRepository.save(order);
+
+        // Cria o registro de pagamento
+        Payment payment = paymentService.createPayment(savedOrder);
+
+        // Inicializa o pagamento no Stripe
+        StripeCheckoutResponse checkout =
+                paymentService.initializePayment(payment);
+
+        return orderMapper.toOrderCheckoutResponse(savedOrder, checkout.checkoutUrl());
     }
 
     // validar se o cupom pode ser aplicado

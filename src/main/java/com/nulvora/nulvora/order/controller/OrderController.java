@@ -1,8 +1,10 @@
 package com.nulvora.nulvora.order.controller;
 
 import com.nulvora.nulvora.order.dto.request.OrderRequest;
+import com.nulvora.nulvora.order.dto.response.OrderCheckoutResponse;
 import com.nulvora.nulvora.order.dto.response.OrderResponse;
 import com.nulvora.nulvora.order.service.OrderService;
+import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/new")
-    public ResponseEntity<OrderResponse> createOrder(
+    public ResponseEntity<OrderCheckoutResponse> createOrder(
             @Valid @RequestBody OrderRequest request
-    ) {
+    ) throws StripeException {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request));

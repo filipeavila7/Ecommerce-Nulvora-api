@@ -6,6 +6,7 @@ import com.nulvora.nulvora.coupon.entity.DiscountType;
 import com.nulvora.nulvora.coupon.repository.CouponRepository;
 import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.order.dto.request.OrderRequest;
+import com.nulvora.nulvora.order.dto.response.OrderCheckoutResponse;
 import com.nulvora.nulvora.order.dto.response.OrderResponse;
 import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.order.mapper.OrderMapper;
@@ -17,6 +18,7 @@ import com.nulvora.nulvora.orderItens.service.OrderItemService;
 import com.nulvora.nulvora.user.entity.User;
 import com.nulvora.nulvora.userCoupon.entity.UserCoupon;
 import com.nulvora.nulvora.userCoupon.service.UserCouponService;
+import com.stripe.exception.StripeException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -58,7 +60,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Test
-    void shouldApplyPercentageCouponSuccessfully() {
+    void shouldApplyPercentageCouponSuccessfully() throws StripeException {
 
         // Arrange
 
@@ -112,7 +114,7 @@ class OrderServiceTest {
 
         // Act
 
-        OrderResponse result = orderService.createOrder(request);
+        OrderCheckoutResponse result = orderService.createOrder(request);
 
         // Assert
 
