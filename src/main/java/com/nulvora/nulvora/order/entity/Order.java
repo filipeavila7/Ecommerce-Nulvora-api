@@ -18,14 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orders",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_order_variant", // não permite a mesma variante duas vezes na order
-                        columnNames = {"order_id", "product_variant_id"}
-                )
-        }
-)
+@Table(name = "orders")
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,8 +49,8 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order")
-    private Payment payment;
+    @OneToMany(mappedBy = "order")
+    private List<Payment> payments;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

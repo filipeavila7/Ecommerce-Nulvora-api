@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.cartItens.controller;
 
 import com.nulvora.nulvora.cartItens.dto.request.CartItemRequest;
+import com.nulvora.nulvora.cartItens.dto.request.CartItemUpdateRequest;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemPostResponse;
 import com.nulvora.nulvora.cartItens.dto.response.CartItemResponse;
 import com.nulvora.nulvora.cartItens.service.CartItemService;
@@ -33,6 +34,16 @@ public class CartItemController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(cartItemService.addItensInCart(request));
+    }
+
+    @PatchMapping("/{cartItemId}")
+    public ResponseEntity<CartItemPostResponse> updateCartItemQuantity(
+            @PathVariable Long cartItemId,
+            @RequestBody @Valid CartItemUpdateRequest request
+    ) {
+        return ResponseEntity.ok(
+                cartItemService.updateCartItemQuantity(request, cartItemId)
+        );
     }
 
 

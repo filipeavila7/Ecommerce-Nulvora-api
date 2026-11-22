@@ -12,6 +12,13 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "order-item",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_order_variant", // não permite a mesma variante duas vezes na order
+                        columnNames = {"order_id", "product_variant_id"}
+                )
+        })
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

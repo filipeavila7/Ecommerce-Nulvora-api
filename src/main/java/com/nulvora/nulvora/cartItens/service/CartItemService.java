@@ -1,6 +1,6 @@
 package com.nulvora.nulvora.cartItens.service;
 
-import com.nulvora.nulvora.cart.dto.response.CartResponse;
+
 import com.nulvora.nulvora.cart.entity.Cart;
 import com.nulvora.nulvora.cart.repository.CartRepository;
 import com.nulvora.nulvora.cartItens.dto.request.CartItemRequest;

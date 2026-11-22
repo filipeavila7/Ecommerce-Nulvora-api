@@ -19,12 +19,11 @@ public class Payment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
-
     @Column(unique = true)
     private String stripePaymentIntentId;
+
+    @Column(unique = true)
+    private String stripeCheckoutSessionId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -32,4 +31,8 @@ public class Payment extends BaseEntity {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 }
