@@ -7,6 +7,7 @@ import com.nulvora.nulvora.order.entity.Order;
 import com.nulvora.nulvora.profile.entity.Profile;
 import com.nulvora.nulvora.review.entity.Review;
 import com.nulvora.nulvora.userCoupon.entity.UserCoupon;
+import com.nulvora.nulvora.wishList.entity.WishList;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +45,9 @@ public class User  {
 
     @OneToOne(mappedBy = "user")
     private Cart cart;
+
+    @OneToOne(mappedBy = "user")
+    private WishList wishList;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();

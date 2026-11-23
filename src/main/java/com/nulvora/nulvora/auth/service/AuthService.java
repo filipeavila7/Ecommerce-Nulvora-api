@@ -13,6 +13,7 @@ import com.nulvora.nulvora.user.dto.request.UserRequest;
 import com.nulvora.nulvora.user.entity.User;
 import com.nulvora.nulvora.user.mapper.UserMapper;
 import com.nulvora.nulvora.user.repository.UserRepository;
+import com.nulvora.nulvora.wishList.service.WishListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +33,7 @@ public class AuthService {
     private final UserMapper userMapper;
     private final ProfileService profileService;
     private final CartService cartService;
+    private final WishListService wishListService;
 
 
     // registro de usuario
@@ -59,6 +61,9 @@ public class AuthService {
 
         // cria um carrinho pro usuario
         cartService.createCartForUser(user);
+
+        // cria uma lista de desejtos pro usuario
+        wishListService.createWishListForUser(user);
 
         userRepository.save(user);
 

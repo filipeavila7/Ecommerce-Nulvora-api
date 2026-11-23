@@ -1,5 +1,6 @@
 package com.nulvora.nulvora.user.service;
 
+import com.nulvora.nulvora.cart.service.CartService;
 import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.user.dto.request.UserRequest;
 import com.nulvora.nulvora.user.dto.response.UserResponse;
@@ -7,6 +8,7 @@ import com.nulvora.nulvora.user.entity.User;
 import com.nulvora.nulvora.user.helper.UserHelper;
 import com.nulvora.nulvora.user.mapper.UserMapper;
 import com.nulvora.nulvora.user.repository.UserRepository;
+import com.nulvora.nulvora.wishList.service.WishListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,8 @@ public class UserService {
     private final UserHelper userHelper;
     private final PasswordEncoder passwordEncoder;
     private final GlobalHelperService globalHelperService;
+    private final CartService cartService;
+    private final WishListService wishListService;
 
 
     // pegar logado
@@ -45,6 +49,12 @@ public class UserService {
         user.setPassword(
                 passwordEncoder.encode(request.password())
         );
+
+        // cria um carrinho pro usuario
+        cartService.createCartForUser(user);
+
+        // cria uma lista de desejtos pro usuario
+        wishListService.createWishListForUser(user);
 
         // salva
         userRepository.save(user);
