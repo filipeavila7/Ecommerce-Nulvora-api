@@ -61,16 +61,16 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
   - [ ] Configurar rotas públicas no Spring Security: endpoints de leitura pública do catálogo (`GET /products/**`, `GET /categories/**`), webhooks da Stripe (`POST /payments/webhook`) e documentação Swagger (`/v3/api-docs/**`, `/swagger-ui/**`).
 
 - [ ] **[P0]** **Auditoria e Correção de Entidades JPA e Modelagem de Dados**
-  - [ ] Adicionar herança de `BaseEntity` nas entidades que ainda não a estendem para garantir auditoria temporal (`createdAt`, `updatedAt`): `User`, `Address`, `Profile`, `Category`, `Product`, `ProductVariant`, `Cart`, `CartItem`.
-  - [ ] Corrigir cardinalidade de `User` ➔ `Address`:
+  - [X] Adicionar herança de `BaseEntity` nas entidades que ainda não a estendem para garantir auditoria temporal (`createdAt`, `updatedAt`): `User`, `Address`, `Profile`, `Category`, `Product`, `ProductVariant`, `Cart`, `CartItem`.
+  - [X] Corrigir cardinalidade de `User` ➔ `Address`:
     - Decisão no código atual: `User` possui `@OneToOne` com `Address`, enquanto e-commerces geralmente exigem `@OneToMany` com flag `isDefault`.
     - *Ação:* Ajustar para `@OneToMany` ou manter `@OneToOne` conforme decisão arquitetural formalizada.
-  - [ ] Modelar relacionamento entre `OrderItem` e `ProductVariant`:
+  - [X] Modelar relacionamento entre `OrderItem` e `ProductVariant`:
     - Atualmente `OrderItem` só possui quantidade, preço e `Order`, mas não referencia `ProductVariant` ou dados imutáveis do produto/SKU snapshot.
     - *Ação:* Adicionar relacionamento `@ManyToOne` com `ProductVariant` e campos de snapshot (`productName`, `sku`, `variantName`).
-  - [ ] Corrigir entidade `Payment`:
+  - [X] Corrigir entidade `Payment`:
     - Atualmente `Payment` possui `@OneToOne` bidirecional com `Order`, porém não há `@JoinColumn` mapeado no lado de `Order` e sem cascade claro.
-  - [ ] Corrigir entidade `ProductKeyword`:
+  - [X] Corrigir entidade `ProductKeyword`:
     - Atualmente possui apenas `@Id Long id`. Vincular com `Product` (`@ManyToMany` ou `@ElementCollection`) e campo de texto `keyword`.
   - [ ] Completar entidades mínimas vazias: `Coupon`, `Shipment`, `WishList`, `Notification`.
 
@@ -80,10 +80,10 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
   - [ ] Criar script `V1__init_schema.sql` em `src/main/resources/db/migration` com todas as tabelas, índices e foreign keys do estado atual.
   - [ ] Criar índices para chaves estrangeiras e buscas frequentes (`sku`, `email`, `status`, `order_id`, `category_id`).
 
-- [ ] **[P1]** **Refinamento do Tratamento Global de Exceções (`GlobalExceptionHandler`)**
-  - [ ] Adicionar handler para `DataIntegrityViolationException` e `DuplicateKeyException` para retornar HTTP 409 Conflict em violações de unique constraints sem vazar detalhes internos do banco.
-  - [ ] Adicionar handler para `HttpMessageNotReadableException` (JSON malformado ou tipos inválidos) retornando HTTP 400 Bad Request.
-  - [ ] Adicionar handler para `AccessDeniedException` retornando HTTP 403 Forbidden padronizado.
+- [] **[P1]** **Refinamento do Tratamento Global de Exceções (`GlobalExceptionHandler`)**
+  - [X] Adicionar handler para `DataIntegrityViolationException` e `DuplicateKeyException` para retornar HTTP 409 Conflict em violações de unique constraints sem vazar detalhes internos do banco.
+  - [X] Adicionar handler para `HttpMessageNotReadableException` (JSON malformado ou tipos inválidos) retornando HTTP 400 Bad Request.
+  - [X] Adicionar handler para `AccessDeniedException` retornando HTTP 403 Forbidden padronizado.
   - [ ] Criar hierarquia de exceções de domínio do projeto (`ResourceNotFoundException`, `BusinessRuleException`, `StockUnavailableException`, `UnauthorizedOperationException`) em substituição ao uso cru de `ResponseStatusException` nos services.
 
 ---
@@ -94,9 +94,9 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
 
 - [ ] **[P0]** **Módulo de Usuários e Gestão de Contas (`user`)**
   - Estado Atual: `User` possui entidade básica. `UserService` implementa apenas criação simples duplicando parte do `AuthService`. `UserController` está vazio.
-  - [ ] Criar endpoint `GET /users/me` para consulta dos dados do usuário autenticado a partir do token JWT.
-  - [ ] Criar endpoint `PUT /users/me` com DTO de atualização (`name`, etc.).
-  - [ ] Implementar fluxo de alteração de senha autenticada (`PUT /users/me/password`):
+  - [X] Criar endpoint `GET /users/me` para consulta dos dados do usuário autenticado a partir do token JWT.
+  - [X] Criar endpoint `PUT /users/me` com DTO de atualização (`name`, etc.).
+  - [X] Implementar fluxo de alteração de senha autenticada (`PUT /users/me/password`):
     - Validar senha atual via `passwordEncoder.matches`.
     - Garantir força da nova senha e impedir repetição imediata.
   - [ ] Implementar desativação lógica de conta (`DELETE /users/me`):
@@ -131,15 +131,15 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
 
 - [ ] **[P1]** **Módulo de Endereços (`address`)**
   - Estado Atual: Entidade `Address` criada. `AddressService`, `AddressController` e DTOs estão vazios.
-  - [ ] Implementar `AddressRequest` com validações Bean Validation (`street`, `number`, `neighborhood`, `city`, `state`, `zipCode` no formato `\\d{5}-?\\d{3}`).
-  - [ ] Implementar `AddressResponse`.
+  - [X] Implementar `AddressRequest` com validações Bean Validation (`street`, `number`, `neighborhood`, `city`, `state`, `zipCode` no formato `\\d{5}-?\\d{3}`).
+  - [X] Implementar `AddressResponse`.
   - [ ] Decisão de Arquitetura: Usuário terá apenas 1 endereço fixo ou múltiplos endereços (com flag `isDefault`)?
-  - [ ] Implementar `AddressService`:
+  - [X] Implementar `AddressService`:
     - Método para cadastrar endereço vinculado estritamente ao usuário do contexto de segurança.
     - Método para listar endereço(s) do usuário.
     - Método para atualizar endereço garantindo que o usuário só altere seu próprio endereço (`Ownership Verification`).
     - Método para exclusão de endereço com verificação de integridade (impedir exclusão caso haja pedidos vinculados que dependam dele).
-  - [ ] Implementar `AddressController` com mapeamento dos endpoints RESTful seguros.
+  - [X] Implementar `AddressController` com mapeamento dos endpoints RESTful seguros.
 
 ---
 
@@ -149,33 +149,33 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
 
 - [ ] **[P0]** **Módulo de Categorias (`category`)**
   - Estado Atual: Entidade `Category` básica (`id`, `name`, `active`, lista de produtos). Demais classes vazias.
-  - [ ] Definir `CategoryRequest` com campos: `name` (not blank, max 100), `slug` (opcional ou gerado), `active`.
-  - [ ] Definir `CategoryResponse`.
-  - [ ] Implementar `CategoryService`:
+  - [X] Definir `CategoryRequest` com campos: `name` (not blank, max 100), `slug` (opcional ou gerado), `active`.
+  - [X] Definir `CategoryResponse`.
+  - [X] Implementar `CategoryService`:
     - Cadastrar categoria com validação de unicidade de nome.
     - Atualizar dados de categoria.
     - Desativação lógica (`soft delete`) ao invés de deleção física se houver produtos vinculados.
     - Listagem pública de categorias ativas (`GET /categories`).
     - Listagem administrativa com filtros e paginação (`GET /admin/categories`).
-  - [ ] Implementar `CategoryController` separando rotas públicas de rotas restritas a `ADMIN`.
+  - [X] Implementar `CategoryController` separando rotas públicas de rotas restritas a `ADMIN`.
 
 - [ ] **[P0]** **Módulo de Produtos (`product`)**
   - Estado Atual: Entidade `Product` básica com relacionamento para `ProductVariant` e `Category`. DTOs e Service vazios.
-  - [ ] Definir `ProductRequest` contendo: `name`, `description`, `categoryId`, e opcionalmente variantes iniciais.
-  - [ ] Definir `ProductResponse` contendo resumo do produto, categoria e lista de variantes disponíveis.
-  - [ ] Implementar `ProductService`:
+  - [X] Definir `ProductRequest` contendo: `name`, `description`, `categoryId`, e opcionalmente variantes iniciais.
+  - [X] Definir `ProductResponse` contendo resumo do produto, categoria e lista de variantes disponíveis.
+  - [] Implementar `ProductService`:
     - Cadastrar produto validando existência e status ativo da categoria informada.
     - Atualizar produto e gerenciar associação com categorias.
     - Desativação lógica de produtos (`active = false`), propagando para suas variantes.
     - Consulta paginada pública (`GET /products`): filtros por categoria, termo de busca, ordenação por preço e novidades.
     - Consulta detalhada por ID ou Slug (`GET /products/{id}`).
-  - [ ] Implementar `ProductController` com endpoints públicos de leitura e endpoints protegidos com `ROLE_ADMIN` para mutações.
+  - [X] Implementar `ProductController` com endpoints públicos de leitura e endpoints protegidos com `ROLE_ADMIN` para mutações.
 
 - [ ] **[P0]** **Módulo de Variantes de Produto e Controle de Estoque (`productVariant`)**
   - Estado Atual: Entidade possui `sku`, `color`, `size`, `price`, `stockQuantity`, `isDefault`, `active`, `product`. DTOs e Service vazios.
-  - [ ] Definir `ProductVariantRequest` com validações rigorosas:
+  - [X] Definir `ProductVariantRequest` com validações rigorosas:
     - `@NotBlank` no `sku`, `@Positive` no `price`, `@Min(0)` no `stockQuantity`.
-  - [ ] Definir `ProductVariantResponse`.
+  - [X] Definir `ProductVariantResponse`.
   - [ ] Implementar `ProductVariantServiceTest`:
     - Criação de variantes garantindo unicidade global do `sku`.
     - Regra de negócio: garantir que haja apenas uma variante marcada como `isDefault` por produto.
@@ -195,10 +195,10 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
     - Garantir regra: apenas 1 imagem primária por produto (`isPrimary = true`).
     - Remoção de imagens e expurgo do provedor de storage.
 
-- [ ] **[P2]** **Módulo de Palavras-Chave de Produtos (`productKeywords`)**
+- [X] **[P2]** **Módulo de Palavras-Chave de Produtos (`productKeywords`)**
   - Estado Atual: Entidade possui apenas `id`.
-  - [ ] Decidir se `ProductKeyword` será mantido como entidade dedicada ou substituído por `@ElementCollection` de tags no `Product`.
-  - [ ] Se mantida como entidade: criar campos `keyword` (normalizado em minúsculas), vincular a `Product`, implementar repositório e busca por tags.
+  - [X] Decidir se `ProductKeyword` será mantido como entidade dedicada ou substituído por `@ElementCollection` de tags no `Product`.
+  - [X] Se mantida como entidade: criar campos `keyword` (normalizado em minúsculas), vincular a `Product`, implementar repositório e busca por tags.
 
 ---
 
@@ -208,9 +208,9 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
 
 - [ ] **[P0]** **Módulo de Itens e Carrinho (`cart` / `cartItens`)**
   - Estado Atual: Entidades `Cart` e `CartItem` possuem mapeamentos JPA básicos. Services, DTOs e Controllers estão vazios.
-  - [ ] Implementar `CartItemRequest` contendo `productVariantId` e `quantity` (`@Min(1)`).
-  - [ ] Implementar `CartResponse` e `CartItemResponse` contendo detalhamento de preços correntes, subtotais e estoque disponível no momento da consulta.
-  - [ ] Implementar `CartService`:
+  - [X] Implementar `CartItemRequest` contendo `productVariantId` e `quantity` (`@Min(1)`).
+  - [X] Implementar `CartResponse` e `CartItemResponse` contendo detalhamento de preços correntes, subtotais e estoque disponível no momento da consulta.
+  - [] Implementar `CartService`:
     - Obter ou criar automaticamente o carrinho do usuário autenticado (`getOrCreateCartForUser`).
     - Adicionar item ao carrinho:
       - Validar se a variante existe e está ativa (`active = true`).

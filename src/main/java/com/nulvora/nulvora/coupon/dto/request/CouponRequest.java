@@ -45,4 +45,12 @@ public record CouponRequest(
         LocalDateTime expireAt
 
 ) {
+        @AssertTrue(message = "A data de expiração deve ser posterior à data de início")
+        public boolean isExpireAtAfterStartAt() {
+                if (startAt == null || expireAt == null) {
+                        return true;
+                }
+
+                return expireAt.isAfter(startAt);
+        }
 }
