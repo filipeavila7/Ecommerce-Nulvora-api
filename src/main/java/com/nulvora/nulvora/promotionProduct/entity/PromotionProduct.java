@@ -13,6 +13,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_promotion_product",
+                        columnNames = {"promotion_id", "product_id"}
+                )
+        }
+)
 public class PromotionProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
