@@ -1,5 +1,6 @@
 package com.nulvora.nulvora.promotions.service;
 
+import com.nulvora.nulvora.common.utils.DateUtils;
 import com.nulvora.nulvora.coupon.entity.DiscountType;
 import com.nulvora.nulvora.promotions.dto.request.PromotionRequest;
 import com.nulvora.nulvora.promotions.dto.request.PromotionUpdateRequest;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +62,34 @@ public class PromotionService {
         );
 
     }
+
+    // validar promoção
+    public Promotion validatePromotion(Long promotionId){
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Promoção não encontrada"));
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(promotion.getStartAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Essa promoção ainda não está disponível, iniciará em " +
+                            DateUtils.formatDateTime(promotion.getStartAt()));
+        }
+
+        if (!now.isBefore(promotion.getExpireAt())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Essa promoção expirou em " + DateUtils.formatDateTime(promotion.getExpireAt()));
+        }
+
+        if (!promotion.isActive()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Essa promoção não está ativa");
+        }
+
+        return promotion;
+    }
+
 
 
 }

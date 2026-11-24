@@ -1,5 +1,6 @@
 package com.nulvora.nulvora.userCoupon.service;
 
+import com.nulvora.nulvora.common.utils.DateUtils;
 import com.nulvora.nulvora.coupon.entity.Coupon;
 import com.nulvora.nulvora.coupon.repository.CouponRepository;
 import com.nulvora.nulvora.helper.GlobalHelperService;
@@ -65,12 +66,13 @@ public class UserCouponService {
 
         if (now.isBefore(coupon.getStartAt())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Esse cupom ainda não está disponível");
+                    "Esse cupom ainda não está disponível, iniciará em " +
+                            DateUtils.formatDateTime(coupon.getStartAt()));
         }
 
         if (!now.isBefore(coupon.getExpireAt())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Esse cupom expirou");
+                    "Esse cupom expirou em " + DateUtils.formatDateTime(coupon.getExpireAt()));
         }
 
         return userCoupon;
@@ -100,12 +102,13 @@ public class UserCouponService {
 
         if (now.isBefore(coupon.getStartAt())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Esse cupom ainda não está disponível");
+                    "Esse cupom ainda não está disponível, iniciará em " +
+                            DateUtils.formatDateTime(coupon.getStartAt()));
         }
 
         if (!now.isBefore(coupon.getExpireAt())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Esse cupom expirou");
+                    "Esse cupom expirou em " + DateUtils.formatDateTime(coupon.getExpireAt()));
         }
 
         return coupon;
