@@ -27,6 +27,10 @@ public class PromotionService {
     // TODO - (o valor nunca pode ficar negativo ou 0, impedir editar o valor de variantes quando o resultado ficar
     //  menor ou 0 quando aplicar a promoção se o tipo for FIXED_AMOUNT.)
 
+    // TODO - criar get de todas as promoções usando promotionResponse
+    // TODO - criar get de detalhes de uma promoção, e nela usar PromotionDetaisResponse, onde irá mostrar todos os
+    //  relacionamentos que aquela promoção tem com os produtos
+
     // criar promoções
     public PromotionResponse createPromotion(PromotionRequest request){
         Promotion promotion = promotionMapper.toEntity(request);

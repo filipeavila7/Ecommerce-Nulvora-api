@@ -23,7 +23,7 @@ public class PromotionProductService {
     private final PromotionService promotionService;
     private final GlobalHelperService globalHelperService;
 
-    // adcionar uma promoção a um produto
+    // adicionar uma promoção a um produto ou substituir promoção ja existente
     public PromotionProductResponse crateProductPromotion(Long productId, Long promotionId){
         // pega o produto
         Product product = globalHelperService.getActiveProductOrThrow(productId);
@@ -40,14 +40,15 @@ public class PromotionProductService {
                     return newAssociation;
                 });
 
-        // valida a promoção atual
-        validateCurrentPromotion(association.getPromotion());
-
         // substitui ou cria nova relação com promoção
         association.setPromotion(promotion);
 
        return promotionProductMapper.toPromotionProductResponse(promotionProductRepository.save(association));
     }
+
+    // remover promoção
+
+    // adicionar promoções em categorias
 
     // validar promoção atual
     private void validateCurrentPromotion(Promotion currentPromotion) {
