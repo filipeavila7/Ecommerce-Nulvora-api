@@ -31,14 +31,12 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.getAllPromotions(pageable));
     }
 
-
     @GetMapping("/{promotionId}")
     public ResponseEntity<PromotionDetailsResponse> getPromotionDetails(
             @PathVariable Long promotionId
     ) {
         return ResponseEntity.ok(promotionService.getPromotionDetails(promotionId));
     }
-
 
     @PostMapping("/new")
     public ResponseEntity<PromotionResponse> createPromotion(
@@ -47,7 +45,6 @@ public class PromotionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(promotionService.createPromotion(request));
     }
-
 
     @PatchMapping("/update/{promotionId}")
     public ResponseEntity<PromotionResponse> updatePromotion(
