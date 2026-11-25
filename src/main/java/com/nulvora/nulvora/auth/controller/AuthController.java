@@ -14,12 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
+    // cadastrar usuario
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public TokenResponse register(
@@ -28,6 +29,7 @@ public class AuthController {
         return authService.register(request);
     }
 
+    // realizar login
     @PostMapping("/login")
     public ResponseEntity<TokenResponse>  login(
             @Valid @RequestBody AuthRequest request
@@ -35,12 +37,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
-
+    // recriar jwt com refreshToken
     @PostMapping("/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshRequest request) {
         return authService.refresh(request.refreshToken());
     }
 
+    // realizar logout
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @Valid @RequestBody RefreshRequest request

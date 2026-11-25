@@ -13,12 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RestController("/promotion-product")
+@RestController("/api/promotion-product")
 public class PromotionProductController {
 
     private final PromotionProductService promotionProductService;
 
-    // GET de todos os produtos relacionados a uma promoção
+    // listar todos os produtos relacionados a uma promoção
     @GetMapping("/{promotionId}/products")
     public ResponseEntity<Page<PromotionProductDetailsResponse>> getPromotionProducts(
             @PathVariable Long promotionId,
@@ -30,7 +30,7 @@ public class PromotionProductController {
         );
     }
 
-    // POST para adicionar uma promoção aos produtos de uma categoria
+    // adicionar uma promoção aos produtos de uma categoria
     @PostMapping("/categories/{categoryId}/promotions/{promotionId}")
     public ResponseEntity<Void> addPromotionToCategory(
             @PathVariable Long categoryId,
@@ -40,7 +40,7 @@ public class PromotionProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // POST para adcionar uma promoção ou substituir
+    // adcionar uma promoção ou substituir
     @PostMapping("/products/{productId}/promotion/{promotionId}")
     public ResponseEntity<PromotionProductResponse> addPromotionToProduct(
             @PathVariable Long productId,
@@ -51,7 +51,7 @@ public class PromotionProductController {
         );
     }
 
-    // DELETE para remover a promoção de um produto
+    // remover a promoção de um produto
     @DeleteMapping("/products/{productId}/promotion")
     public ResponseEntity<Void> removePromotionFromProduct(
             @PathVariable Long productId
@@ -60,7 +60,7 @@ public class PromotionProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // DELETE para remover todas as promoções dos produtos de uma categoria
+    // remover todas as promoções dos produtos de uma categoria
     @DeleteMapping("/categories/{categoryId}/promotions")
     public ResponseEntity<Void> removeAllPromotionsFromCategory(
             @PathVariable Long categoryId

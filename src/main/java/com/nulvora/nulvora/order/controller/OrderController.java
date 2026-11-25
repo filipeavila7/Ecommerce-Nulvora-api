@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/api/order")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/new")
+    // criar pedido
+    @PostMapping()
     public ResponseEntity<OrderCheckoutResponse> createOrder(
             @Valid @RequestBody OrderRequest request
     ) throws StripeException {

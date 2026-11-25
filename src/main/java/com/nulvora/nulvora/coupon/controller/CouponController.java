@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/coupon")
+@RequestMapping("/api/coupon")
 public class CouponController {
     private final CouponService couponService;
 
 
     // Criar cupom
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<CouponResponse> createCoupon(
             @RequestBody @Valid CouponRequest request
     ) {
@@ -27,7 +27,8 @@ public class CouponController {
                 .body(couponService.createCoupon(request));
     }
 
-    @PutMapping("/{couponId}")
+    // eidtar cupom
+    @PatchMapping("/{couponId}")
     public ResponseEntity<CouponResponse> updateCoupon(
             @PathVariable Long couponId,
             @RequestBody @Valid CouponUpdateRequest request

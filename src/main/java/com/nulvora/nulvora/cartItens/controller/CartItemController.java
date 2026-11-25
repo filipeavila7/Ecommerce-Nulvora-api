@@ -14,21 +14,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cart-item")
+@RequestMapping("/api/cart-item")
 @RequiredArgsConstructor
 public class CartItemController {
 
     private final CartItemService cartItemService;
 
-
-    @GetMapping("/my")
+    // ver os itens no carrinho
+    @GetMapping()
     public ResponseEntity<Page<CartItemResponse>> getMyCartItems(
             Pageable pageable
     ) {
         return ResponseEntity.ok(cartItemService.getMyCartItems(pageable));
     }
 
-    @PostMapping("/add")
+    // adicionar itens ao carrinho
+    @PostMapping()
     public ResponseEntity<CartItemPostResponse> addItemsInCart(
             @RequestBody @Valid CartItemRequest request
     ) {
@@ -36,6 +37,7 @@ public class CartItemController {
                 .body(cartItemService.addItensInCart(request));
     }
 
+    // atualizar quantidade de itens no carrinho
     @PatchMapping("/{cartItemId}")
     public ResponseEntity<CartItemPostResponse> updateCartItemQuantity(
             @PathVariable Long cartItemId,

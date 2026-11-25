@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/promotions")
+@RequestMapping("/api/promotions")
 public class PromotionController {
 
     private final PromotionService promotionService;
 
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Page<PromotionResponse>> getAllPromotions(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
@@ -38,7 +38,7 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.getPromotionDetails(promotionId));
     }
 
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<PromotionResponse> createPromotion(
             @Valid @RequestBody PromotionRequest request
     ) {
@@ -46,7 +46,7 @@ public class PromotionController {
                 .body(promotionService.createPromotion(request));
     }
 
-    @PatchMapping("/update/{promotionId}")
+    @PatchMapping("/{promotionId}")
     public ResponseEntity<PromotionResponse> updatePromotion(
             @Valid @RequestBody PromotionUpdateRequest request,
             @PathVariable Long promotionId

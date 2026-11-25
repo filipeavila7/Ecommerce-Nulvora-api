@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user-coupon")
+@RequestMapping("/api/user-coupon")
 public class UserCouponController {
     private final UserCouponService userCouponService;
 
-
+    // resgatr cupom
     @PostMapping("/{couponId}/assign")
     public ResponseEntity<UserCouponResponse> createUserCoupon(
             @PathVariable Long couponId

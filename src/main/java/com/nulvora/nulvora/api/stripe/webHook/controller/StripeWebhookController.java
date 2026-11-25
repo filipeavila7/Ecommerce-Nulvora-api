@@ -40,7 +40,6 @@ public class StripeWebhookController {
         }
 
         // log de debug
-        System.out.println("Evento recebido: " + event.getType());
 
         paymentService.processWebhookEvent(event);
 

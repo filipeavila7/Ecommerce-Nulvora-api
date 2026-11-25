@@ -24,6 +24,8 @@ public class AddressService {
     private final GlobalHelperService globalHelperService;
 
 
+    // FIXME - refatorar essa service e adaptar para a api de cep
+
     // get de todos os endereços do usuario logado
     public Page<AddressResponse> getMyAddress(Pageable pageable){
         return addressRepository.findByUserId(

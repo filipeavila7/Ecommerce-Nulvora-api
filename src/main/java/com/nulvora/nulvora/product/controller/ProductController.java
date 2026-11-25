@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/product")
+@RequestMapping("/api/product")
 public class ProductController {
     private final ProductService productService;
 
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<ProductResponse> createProduct(
             @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<Page<ProductSumaryResponse>> getAllProducts(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
@@ -38,7 +38,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("/{productId}/details")
+    @GetMapping("/{productId}")
     public ResponseEntity<ProductDetailsResponse> getProductDetails(
             @PathVariable Long productId
     ) {
@@ -47,7 +47,7 @@ public class ProductController {
         );
     }
 
-    @PatchMapping("/{productId}/update")
+    @PatchMapping("/{productId}")
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable Long productId,
             @Valid @RequestBody ProductUpdateRequest request

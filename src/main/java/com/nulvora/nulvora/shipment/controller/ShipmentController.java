@@ -4,6 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/shipment")
+@RequestMapping("/api/shipment")
 public class ShipmentController {
 }

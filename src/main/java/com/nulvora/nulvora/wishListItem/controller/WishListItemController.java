@@ -12,13 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/wish-list-item")
+@RequestMapping("/api/wish-list-item")
 @RequiredArgsConstructor
 public class WishListItemController {
     private final WishListItemService wishListItemService;
 
-
-    @GetMapping("/my")
+    // listar produtos da lista de desejos
+    @GetMapping()
     public ResponseEntity<Page<WishListItemResponse>> getMyWishListItems(
             @PageableDefault(size = 12, sort = "createdAt",
                     direction = Sort.Direction.DESC) Pageable pageable
@@ -27,7 +27,8 @@ public class WishListItemController {
 
     }
 
-    @PostMapping("/add/{productId}")
+    // adicionar produtos dentro da lista de desejos
+    @PostMapping("/{productId}")
     public ResponseEntity<WishListItemResponse> addItemInWishList(
             @PathVariable Long productId
     ) {
@@ -35,7 +36,8 @@ public class WishListItemController {
                 .body(wishListItemService.addItemInWishList(productId));
     }
 
-    @DeleteMapping("/remove/{wishListItemId}")
+    // remover dentro da lista de desejos
+    @DeleteMapping("/{wishListItemId}")
     public ResponseEntity<Void> removeItemFromWishListIn(
             @PathVariable Long wishListItemId
     ) {
@@ -44,8 +46,8 @@ public class WishListItemController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
-    @DeleteMapping("/remove/product/{productId}")
+    // remover fora da lista de desejos
+    @DeleteMapping("/product/{productId}")
     public ResponseEntity<Void> removeItemFromWishList(
             @PathVariable Long productId
     ) {
