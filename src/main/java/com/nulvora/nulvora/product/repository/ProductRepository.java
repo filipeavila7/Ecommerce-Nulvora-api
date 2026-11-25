@@ -21,6 +21,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
 
     Page<Product> findAllByActiveTrue(Pageable pageable);
 
+    List<Product> findAllByCategoryId(Long categoryId);
+
     // retorna todos os produtos ativos ja montando o dto e com seus respectivos preços minimos dentre as variantes
     @Query("""
     SELECT new com.nulvora.nulvora.product.dto.response.ProductSumaryResponse(

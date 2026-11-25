@@ -9,4 +9,11 @@ import java.util.Optional;
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, Long> {
 
     Optional<PromotionProduct> findByProduct(Product product);
+
+    void deleteAllByProductCategoryId(Long categoryId);
+
+    void deleteAllByProductCategoryIdAndPromotionId(
+            Long categoryId,
+            Long promotionId
+    );
 }

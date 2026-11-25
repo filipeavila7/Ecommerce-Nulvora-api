@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Locale;
@@ -37,7 +38,10 @@ public class AuthService {
 
 
     // registro de usuario
+    // registro de usuario
+    @Transactional
     public TokenResponse register(UserRequest request) {
+
         String email = normalizeEmail(request.email());
 
         // verifica se o email ja foi usado
@@ -48,7 +52,6 @@ public class AuthService {
             );
         }
 
-
         User user = userMapper.toEntity(request);
 
         // criptografa a senha
@@ -56,19 +59,20 @@ public class AuthService {
                 passwordEncoder.encode(request.password())
         );
 
-        // cria uma profile pro usuario
-        profileService.createUserProfile(user);
+        // persiste o usuario primeiro
+        User savedUser = userRepository.save(user);
+
+        // cria um profile pro usuario
+        profileService.createUserProfile(savedUser);
 
         // cria um carrinho pro usuario
-        cartService.createCartForUser(user);
+        cartService.createCartForUser(savedUser);
 
-        // cria uma lista de desejtos pro usuario
-        wishListService.createWishListForUser(user);
+        // cria uma lista de desejos pro usuario
+        wishListService.createWishListForUser(savedUser);
 
-        userRepository.save(user);
-
-        // ja retorna o jwt
-        return generateToken(user);
+        // gera o jwt
+        return generateToken(savedUser);
     }
 
 
