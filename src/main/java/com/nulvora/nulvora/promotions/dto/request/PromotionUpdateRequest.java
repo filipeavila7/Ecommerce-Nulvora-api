@@ -28,7 +28,9 @@ public record PromotionUpdateRequest(
         LocalDateTime startAt,
 
         @Future(message = "A data de expiração deve ser futura")
-        LocalDateTime expireAt
+        LocalDateTime expireAt,
+
+        Boolean active
 
 ) {
 

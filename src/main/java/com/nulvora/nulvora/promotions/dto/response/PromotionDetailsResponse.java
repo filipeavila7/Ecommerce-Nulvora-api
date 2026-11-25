@@ -23,8 +23,9 @@ public record PromotionDetailsResponse(
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime expireAt,
 
-        boolean active,
-        List<PromotionProductDetailsResponse> promotionProducts // lista de produtos relacionados à promoção
+        boolean active
+
+
 
 
 ) {

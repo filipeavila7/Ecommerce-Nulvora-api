@@ -4,6 +4,7 @@ import com.nulvora.nulvora.category.repository.CategoryRepository;
 import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.repository.ProductRepository;
+import com.nulvora.nulvora.promotionProduct.dto.response.PromotionProductDetailsResponse;
 import com.nulvora.nulvora.promotionProduct.dto.response.PromotionProductResponse;
 import com.nulvora.nulvora.promotionProduct.entity.PromotionProduct;
 import com.nulvora.nulvora.promotionProduct.mapper.PromotionProductMapper;
@@ -12,6 +13,8 @@ import com.nulvora.nulvora.promotions.entity.Promotion;
 import com.nulvora.nulvora.promotions.repository.PromotionRepository;
 import com.nulvora.nulvora.promotions.service.PromotionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,25 @@ public class PromotionProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final PromotionRepository promotionRepository;
+
+
+    // retorna todos os produtos relacionado à uma promoção
+    public Page<PromotionProductDetailsResponse> getPromotionProducts(
+            Long promotionId,
+            Pageable pageable
+    ) {
+
+        if (!promotionRepository.existsById(promotionId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Promoção não encontrada"
+            );
+        }
+
+        return promotionProductRepository
+                .findAllByPromotionId(promotionId, pageable)
+                .map(promotionProductMapper::toPromotionProductDetailsResponse);
+    }
 
     // adicionar uma promoção a um produto ou substituir promoção ja existente
     public PromotionProductResponse addPromotionToProduct(Long productId, Long promotionId){

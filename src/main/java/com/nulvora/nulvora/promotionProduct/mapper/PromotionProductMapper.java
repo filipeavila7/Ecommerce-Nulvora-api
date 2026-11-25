@@ -13,4 +13,6 @@ public interface PromotionProductMapper {
     PromotionProductResponse toPromotionProductResponse(PromotionProduct promotionProduct);
 
     PromotionProductDetailsResponse toPromotionProductDetailsResponse(PromotionProduct promotionProduct);
+
+
 }

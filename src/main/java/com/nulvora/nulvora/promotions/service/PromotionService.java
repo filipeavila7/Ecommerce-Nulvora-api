@@ -4,11 +4,14 @@ import com.nulvora.nulvora.common.utils.DateUtils;
 import com.nulvora.nulvora.coupon.entity.DiscountType;
 import com.nulvora.nulvora.promotions.dto.request.PromotionRequest;
 import com.nulvora.nulvora.promotions.dto.request.PromotionUpdateRequest;
+import com.nulvora.nulvora.promotions.dto.response.PromotionDetailsResponse;
 import com.nulvora.nulvora.promotions.dto.response.PromotionResponse;
 import com.nulvora.nulvora.promotions.entity.Promotion;
 import com.nulvora.nulvora.promotions.mapper.PromotionMapper;
 import com.nulvora.nulvora.promotions.repository.PromotionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,22 @@ public class PromotionService {
     // TODO - criar get de todas as promoções usando promotionResponse
     // TODO - criar get de detalhes de uma promoção, e nela usar PromotionDetaisResponse, onde irá mostrar todos os
     //  relacionamentos que aquela promoção tem com os produtos
+
+    // get de todas as promoções
+    public Page<PromotionResponse> getAllPromotions(Pageable pageable ){
+        return promotionRepository.findAll(pageable).map(promotionMapper::toPromotionResponse);
+    }
+
+    // get de detalhes de uma promoção
+    public PromotionDetailsResponse getPromotionDetails(Long promotionId){
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Promoção não encontrada"));
+
+        return  promotionMapper.toPromotionDetailsResponse(promotion);
+    }
+
+
 
     // criar promoções
     public PromotionResponse createPromotion(PromotionRequest request){
